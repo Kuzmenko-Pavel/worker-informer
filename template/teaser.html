@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="referrer" content="always" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+%1%
+<script>
+var format = 'png';
+(function() {
+  var img = new Image();
+  img.onload = function() {
+    if (!!(img.height > 0 && img.width > 0))
+    {
+        format = 'webp';
+    }
+    else
+    {
+        format = 'png';
+    }
+  };
+  img.onerror = function() {
+    format = 'png';
+  };
+  img.src = "data:image/webp;base64,UklGRjIAAABXRUJQVlA4ICYAAACyAgCdASoCAAEALmk0mk0iIiIiIgBoSygABc6zbAAA/v56QAAAAA==";
+})();
+if (!Date.now) {
+    Date.now = function() {
+        return new Date().getTime();
+    }
+}
+if (!('indexOf' in Array.prototype)) {
+    Array.prototype.indexOf= function(find, i /*opt*/) {
+        if (i===undefined){
+            i= 0;
+        }
+        if (i<0){
+            i+= this.length;
+        }
+        if (i<0){
+            i= 0;
+        }
+        for (var n= this.length; i<n; i++){
+            if (i in this && this[i]===find){
+                return i;
+            }
+        }
+        return -1;
+};
+}
+
+Array.prototype.unique = function()
+{
+    var n = {},r=[];
+    for(var i = 0; i < this.length; i++) 
+    {
+        if (!n[this[i]]) 
+        {
+            n[this[i]] = true; 
+            r.push(this[i]); 
+        }
+    }
+    return r;
+};
+function Test(){
+    var test = 'test';
+    try {
+        JSON.parse("{}");
+        localStorage.setItem(test, test);
+        localStorage.removeItem(test);
+        return true;
+    } catch(e) {
+        return false;
+    }
+};
+function FixedQueue(size){
+    var queue = new Array();
+    queue.fixedSize = size;
+    queue.add = FixedQueue.add;
+    queue.load = FixedQueue.load;
+    queue.get = FixedQueue.get;
+    return( queue );
+};
+FixedQueue.add = function(arg1,arg2){
+    arg2 = (arg2 || false);
+    if (arg2)
+    {
+        if (arg1 < this.fixedSize)
+        {
+            this[arg1] = arg2;
+        }
+    }
+    else
+    {
+        if (this.indexOf(arg1) < 0)
+        {
+            this.push(arg1);
+        }
+    }
+    
+    if (this.length <= this.fixedSize){
+        return;
+    }
+    Array.prototype.splice.call(
+        this,
+        0,
+        (this.length - this.fixedSize)
+    );
+
+};
+
+FixedQueue.load = function(arg1,arg2){
+    arg2 = (arg2 || false);
+    if (arg2)
+    {
+        if (arg1 < this.fixedSize)
+        {
+            this[arg1] = arg2;
+        }
+    }
+    else
+    {
+        if (this.indexOf(arg1) < 0)
+        {
+            this.push(arg1);
+        }
+    }
+    
+    if (this.length <= this.fixedSize){
+        return;
+    }
+    Array.prototype.splice.call(
+        this,
+        0,
+        (this.length - this.fixedSize)
+    );
+
+};
+
+FixedQueue.get = function(){
+    Array.prototype.splice.call(
+        this,
+        0,
+        (this.length - this.fixedSize)
+    );
+    return this.join(";");
+};
+
+function ExcludeOffers(invert,counter){
+    var invert_ = Boolean(invert || false);
+    var counter_ = Boolean(counter || false);
+    initialValues = new Object({});
+    initialValues.add = ExcludeOffers.add;
+    initialValues.load = ExcludeOffers.load;
+    initialValues.getString = ExcludeOffers.getString;
+    initialValues.get = ExcludeOffers.get;
+    initialValues.invert = function(){return invert_};
+    initialValues.counter = function(){return counter_};
+    return(initialValues);
+};
+
+ExcludeOffers.add = function(guid, countViews){
+    countViews = (countViews || 1);
+    if (typeof(this[guid]) == 'number')
+    {
+        if (this.invert())
+        {
+            this[guid] = ++this[guid];
+        }
+        else
+        {
+            if (this[guid] > 0)
+            {
+                this[guid] = --this[guid];
+            }
+            else
+            {
+                this[guid] = 0;
+            }
+        }
+    }
+    else
+    {
+        if (this.invert())
+        {
+            this[guid] = countViews;
+        }
+        else
+        {
+            this[guid] = countViews - 1 ;
+        }
+    }
+};
+
+ExcludeOffers.load = function(guid, countViews){
+    this[guid] = countViews;
+};
+
+ExcludeOffers.getString = function(){
+    keys = [];
+    if(this.counter())
+    {
+        for(var key in this) {
+            var value = this[key];
+            if(this.invert())
+            {
+                if (value > 0)
+                {
+                    keys.push(key +"~"+value);
+                }
+            }
+            else
+            {
+                if (value <= 0)
+                {
+                    keys.push(key +"~"+value);
+                }
+            }
+        }
+    }
+    else
+    {
+        for(var key in this) {
+            var value = this[key];
+            if(this.invert())
+            {
+                if (value > 0)
+                {
+                    keys.push(key);
+                }
+            }
+            else
+            {
+                if (value <= 0)
+                {
+                    keys.push(key);
+                }
+            }
+        }
+    }
+    return keys.join(";");
+};
+
+ExcludeOffers.get = function(){
+    keys = [];
+    if(this.counter())
+    {
+        for(var key in this) {
+            var value = this[key];
+            if(this.invert())
+            {
+                if (value > 0)
+                {
+                    keys.push([key, value]);
+                }
+            }
+            else
+            {
+                if (value <= 0)
+                {
+                    keys.push([key,value]);
+                }
+            }
+        }
+    }
+    else
+    {
+        for(var key in this) {
+            var value = this[key];
+            if(this.invert())
+            {
+                if (value > 0)
+                {
+                    keys.push(key);
+                }
+            }
+            else
+            {
+                if (value <= 0)
+                {
+                    keys.push(key);
+                }
+            }
+        }
+    }
+    return keys;
+};
+
+function RetargetingOffers(){
+    initialValues = new Object({});
+    initialValues.add = RetargetingOffers.add;
+    initialValues.load = RetargetingOffers.load;
+    initialValues.get = RetargetingOffers.get;
+    initialValues.remove = RetargetingOffers.remove;
+    return(initialValues);
+};
+
+RetargetingOffers.add = function(guid, arg1, arg2, arg3, arg4){
+    this[guid] = [arg1, arg2, arg3, arg4];
+};
+
+RetargetingOffers.load = function(guid, arg1){
+    if( Object.prototype.toString.call( arg1 ) === '[object Array]' ) {
+        if (typeof arg1[3] == 'undefined')
+        {
+            arg1[3] = arg1[0]
+        }
+        this[guid] = [arg1[0], arg1[1], arg1[2], arg1[3]];
+    }
+};
+
+
+RetargetingOffers.remove = function(key){
+    delete this[key]
+};
+
+RetargetingOffers.get = function(){
+    keys = [];
+    res = [];
+    time = Math.floor(Date.now());
+    for(var key in this) {
+        var value = this[key];
+        if (value[0] > time)
+        {
+            keys.push([
+            key.split('...')[0],
+            this[key][2],
+            this[key][1],
+            parseInt(this[key][3]),
+            Math.abs(new Date(Math.floor(Date.now())).getDate() - new Date(this[key][3] * 1000).getDate())
+            ]);
+        }
+    }
+    keys.sort(function(a,b){
+        if (a[3]<b[3])
+        {
+            return -1;
+        }
+        if (a[3]>b[3])
+        {
+            return 1;
+        }
+        return 0;
+    }
+    );
+    for(x in keys) {
+        if (typeof(keys[x]) != 'function')
+        {
+            res.push([keys[x][0]+"~"+keys[x][1]+"~"+keys[x][2]+"~"+keys[x][4]]);
+        }
+    }
+    return res.join(";");
+};
+
+function GenderAccount(){
+    initialValues = new Object({});
+    initialValues.add = GenderAccount.add;
+    initialValues.get = GenderAccount.get;
+    initialValues.load = GenderAccount.load;
+    return(initialValues);
+};
+
+GenderAccount.add = function(guid, val)
+{
+    if (typeof this[guid] == 'undefined')
+    {
+        var hit_log = new Array(0,0,0);
+        hit_log[val] += 1;
+        this[guid] = [val, hit_log]
+    }
+    else
+    {
+        var hit_log = this[guid][1];
+        hit_log[val] += 1;
+        hit_log[0] = 1;
+        this[guid] = [hit_log.indexOf(Math.max.apply(Math, hit_log)), hit_log];
+    }
+};
+GenderAccount.get = function()
+{
+    res = [];
+    for(var key in this) {
+        if (typeof this[key][0] != 'undefined')
+        {
+            var value = this[key][0];
+            res.push([key+"~"+value]);
+        }
+    }
+    return res.join(";");
+};
+GenderAccount.load = function(guid, arg1){
+    if( Object.prototype.toString.call( arg1 ) === '[object Array]' ) {
+        this[guid] = [arg1[0], arg1[1]];
+    }
+};
+function GenderUser(){
+    initialValues = new Object({});
+    initialValues.add = GenderUser.add;
+    initialValues.get = GenderUser.get;
+    initialValues.load = GenderUser.load;
+    return(initialValues);
+};
+GenderUser.add = function(val)
+{
+    if (typeof this['gender'] == 'undefined')
+    {
+        this['gender'] = val;
+        var hit_log = new Array(0,0,0);
+        hit_log[val] += 1;
+        this['hit_log'] = hit_log;
+    }
+    else
+    {
+        if( Object.prototype.toString.call( this['hit_log'] ) === '[object Array]' ) {
+            var hit_log = this['hit_log'];
+            hit_log[val] += 1;
+            hit_log[0] = 1;
+            this['hit_log'] = hit_log;
+            this['gender'] = hit_log.indexOf(Math.max.apply(Math, hit_log));
+        }
+    }
+};
+GenderUser.get = function()
+{
+    var res = '';
+    if (typeof this['gender'] != 'undefined')
+    {
+        res = this['gender'];
+    }
+    return res;
+};
+GenderUser.load = function(guid, arg1){
+    this[guid] = arg1;
+};
+
+function CostAccount(){
+    initialValues = new Object({});
+    initialValues.add = CostAccount.add;
+    initialValues.get = CostAccount.get;
+    initialValues.load = CostAccount.load;
+    return(initialValues);
+};
+CostAccount.add = function(guid, val)
+{
+    if (typeof this[guid] == 'undefined')
+    {
+        var hit_log = new Array(0,0,0,0,0,0,0,0,0);
+        hit_log[val] += 1;
+        this[guid] = [val, hit_log]
+    }
+    else
+    {
+        var hit_log = this[guid][1];
+        hit_log[val] += 1;
+        hit_log[0] = 1;
+        this[guid] = [hit_log.indexOf(Math.max.apply(Math, hit_log)), hit_log];
+    }
+};
+CostAccount.get = function()
+{
+    res = [];
+    for(var key in this) {
+        if (typeof this[key][0] != 'undefined')
+        {
+            var value = this[key][0];
+            res.push([key+"~"+value]);
+        }
+    }
+    return res.join(";");
+};
+CostAccount.load = function(guid, arg1){
+    if( Object.prototype.toString.call( arg1 ) === '[object Array]' ) {
+        this[guid] = [arg1[0], arg1[1]];
+    }
+};
+
+function CostUser(){
+    initialValues = new Object({});
+    initialValues.add = CostUser.add;
+    initialValues.get = CostUser.get;
+    initialValues.load = CostUser.load;
+    return(initialValues);
+};
+CostUser.add = function(val)
+{
+    if (typeof this['cost'] == 'undefined')
+    {
+        this['cost'] = val;
+        var hit_log = new Array(0,0,0,0,0,0,0,0,0);
+        hit_log[val] += 1;
+        this['hit_log'] = hit_log;
+    }
+    else
+    {
+        if( Object.prototype.toString.call( this['hit_log'] ) === '[object Array]' ) {
+            var hit_log = this['hit_log'];
+            hit_log[val] += 1;
+            hit_log[0] = 1;
+            this['hit_log'] = hit_log;
+            this['cost'] = hit_log.indexOf(Math.max.apply(Math, hit_log));
+        }
+    }
+};
+CostUser.get = function()
+{
+    var res = '';
+    if (typeof this['cost'] != 'undefined')
+    {
+        res = this['cost'];
+    }
+    return res;
+};
+CostUser.load = function(guid, arg1){
+    this[guid] = arg1;
+};
+function ActivityAccount(){
+    initialValues = new Object({});
+    initialValues.add = ActivityAccount.add;
+    initialValues.load = ActivityAccount.load;
+    return(initialValues);
+};
+ActivityAccount.add = function(guid, timeFirst, timeLast){
+    if (typeof this[guid] == 'undefined')
+    {
+        this[guid] = [timeFirst, timeLast];
+    }
+    else
+    {
+        this[guid][1] = timeLast;
+    }
+};
+ActivityAccount.load = function(guid, arg1){
+    if( Object.prototype.toString.call( arg1 ) === '[object Array]' ) {
+        this[guid] = [arg1[0], arg1[1]];
+    }
+};
+
+function ActivityUser(){
+    initialValues = new Object({});
+    initialValues.add = ActivityUser.add;
+    initialValues.load = ActivityUser.load;
+    return(initialValues);
+};
+ActivityUser.add = function(timeFirst, timeLast){
+    if (typeof this['timeFirst'] == 'undefined')
+    {
+        this['timeFirst'] = timeFirst;
+    }
+    this['timeLast'] = timeLast;
+};
+ActivityUser.load = function(guid, arg1){
+    this[guid] = arg1;
+};
+
+function UserHistory(){
+	this.searchengines = new FixedQueue(3);
+	this.context = new FixedQueue(3);
+	this.retargeting = new RetargetingOffers();
+	this.exclude = new ExcludeOffers();
+	this.exclude_click = new ExcludeOffers();
+	this.retargeting_exclude = new ExcludeOffers();
+	this.retargeting_account_exclude = new ExcludeOffers();
+	this.retargeting_exclude_click = new ExcludeOffers();
+	this.retargeting_account_exclude_click = new ExcludeOffers();
+	this.retargeting_view = new ExcludeOffers(true,true);
+	this.history = new FixedQueue(3);
+    this.load = UserHistory.load;
+    this.save = UserHistory.save;
+    this.exclude_clean = UserHistory.exclude_clean;
+    this.exclude_click_clean = UserHistory.exclude_click_clean;
+    this.exclude_get = UserHistory.exclude_get;
+    this.retargeting_clean = UserHistory.retargeting_clean;
+    this.retargeting_account_clean = UserHistory.retargeting_account_clean;
+    this.retargeting_click_clean = UserHistory.retargeting_click_clean;
+    this.retargeting_exclude_get = UserHistory.retargeting_exclude_get;
+    this.retargeting_account_exclude_get = UserHistory.retargeting_account_exclude_get;
+    this.gender_accounts = new GenderAccount();
+    this.gender_user = new GenderUser();
+    this.cost_accounts = new CostAccount();
+    this.cost_user = new CostUser();
+    this.activity_accounts = new ActivityAccount();
+    this.activity_user = new ActivityUser();
+};
+
+UserHistory.load = function(){
+    if (Test() === true)
+    {
+        for (key in this)
+        {
+            if (typeof(this[key]) != 'function')
+            {
+                var history_name = key;
+                var retrievedObject = JSON.parse(localStorage.getItem(history_name));
+                for ( key in retrievedObject)
+                {   
+                    this[history_name].load(key, retrievedObject[key]);
+                }
+            }
+        }
+        return true;
+    }
+    return false;
+};
+UserHistory.save = function(){
+    if (Test() === true)
+    {
+        for (key in this)
+        {
+            if (typeof(this[key]) != 'function')
+            {
+                localStorage.setItem(key, JSON.stringify(this[key]));
+            }
+        }
+        return true;
+    }
+    return false;
+};
+
+UserHistory.exclude_clean = function(cl){
+    if(cl)
+    {
+        this.exclude = new ExcludeOffers();
+        this.save();
+    }
+    return cl;
+};
+UserHistory.exclude_click_clean = function(cl){
+    if(cl)
+    {
+        this.exclude_click = new ExcludeOffers();
+        this.save();
+    }
+    return cl;
+};
+UserHistory.exclude_get = function(){
+    var keys = [];
+    keys = this.exclude.get().concat(this.exclude_click.get());
+    keys = keys.unique();
+    return keys.join(';') ;
+};
+UserHistory.retargeting_clean = function(cl){
+    if(cl)
+    {
+        this.retargeting_exclude = new ExcludeOffers();
+        this.retargeting_view = new ExcludeOffers(true,true);
+        this.save();
+    }
+    return cl;
+};
+UserHistory.retargeting_account_clean = function(cl){
+    if(cl)
+    {
+        this.retargeting_account_exclude = new ExcludeOffers();
+        this.save();
+    }
+    return cl;
+};
+UserHistory.retargeting_click_clean = function(cl){
+    if(cl)
+    {
+        this.retargeting_click_exclude = new ExcludeOffers();
+        this.save();
+    }
+    return cl;
+};
+UserHistory.retargeting_exclude_get = function(){
+    var keys = [];
+    keys = this.retargeting_exclude.get().concat(this.retargeting_exclude_click.get());
+    keys = keys.unique();
+    return keys.join(';') ;
+};
+UserHistory.retargeting_account_exclude_get = function(){
+    var keys = [];
+    keys = this.retargeting_account_exclude.get().concat(this.retargeting_account_exclude_click.get());
+    keys = keys.unique();
+    return keys.join(';') ;
+};
+var uh = new UserHistory();
+uh.load();
+var initjson=%2%;
+var initads=initjson['item'];
+var count=%3%;
+var path='%11%?';
+var cursor=0;
+var divReady=false;
+var ads=new Array();
+var adsa=new Array();
+var adsView="";
+var notification=Boolean(%14%);
+
+var XMLHttpFactories = [
+function () {
+    return new XMLHttpRequest();
+},
+function () {
+    return new ActiveXObject("Msxml2.XMLHTTP");
+},
+function () {
+    return new ActiveXObject("Msxml3.XMLHTTP");
+},
+function () {
+    return new ActiveXObject("Microsoft.XMLHTTP");
+}
+];
+var atimer = false;
+;function ang(){
+    if (typeof(ga) == 'function')
+    {
+        ga('set', 'referrer', '%5%'.toLowerCase());
+        ga('set', 'campaignName', '%8%'.toLowerCase());
+        ga('set', 'campaignSource', '%7%'.toLowerCase());
+        ga('set', 'campaignMedium', '%6%'.toLowerCase());
+        var gec = document.getElementsByTagName('span');
+        for(var i = 0, len = gec.length; i < len; i++) {
+              var track = gec[i].getAttribute("track");
+              var track_el = gec[i].getAttribute("track_el");
+              var t = gec[i].getAttribute("t");
+              var ct = gec[i].getAttribute("ct");
+              var of_id = gec[i].getAttribute("of_id");
+              var of_r = gec[i].getAttribute("of_r");
+              var loc = path + gec[i].getAttribute("loc");
+              if (track)
+              {
+                  (function(track, track_el, t, ct, of_id, of_r, loc) {
+                      gec[i].onclick = function () {
+                      window.open(loc,'_blank');
+
+                      ga('adload.set', 'referrer', '%5%'.toLowerCase());
+                      ga('adload.set', 'campaignName', ct.toLowerCase());
+                      ga('adload.set', 'campaignSource', '%7%'.toLowerCase());
+                      ga('adload.set', 'campaignMedium', '%6%'.toLowerCase());
+                      ga('adload.set', 'campaignContent', t.toLowerCase());
+                      ga('set', 'referrer', '%5%'.toLowerCase());
+                      ga('set', 'campaignName', '%8%'.toLowerCase());
+                      ga('set', 'campaignSource', '%7%'.toLowerCase());
+                      ga('set', 'campaignMedium', '%6%'.toLowerCase());
+                      ga('send', 'event',
+                      'Link', 'Click', track, track_el,
+                      {
+                      'page': '%7%'.toLowerCase(),
+                      'title': '%8%'.toLowerCase()
+                     });
+                      ga('adload.send', 'event',
+                      'Link', 'Click', track, track_el,
+                      {
+                      'page': '%7%'.toLowerCase(),
+                      'title': '%8%'.toLowerCase()
+                      });
+                      if(of_id)
+                      {
+                          if(of_r == 0)
+                          {
+                            uh.exclude_click.add(of_id,1);
+                          }
+                          else
+                          {
+                            uh.retargeting_exclude_click.add(of_id,1);
+                          }
+                          uh.save();
+                      }
+                    };
+                })(track, track_el, t, ct, of_id, of_r, loc);
+             }
+        }
+        ga('send', 'pageview', {
+          'page': '%7%'.toLowerCase(),
+          'title': '%8%'.toLowerCase()
+        });
+        for(i=0;i<adsa.length;i++)
+        {
+            ga('adload.set', 'referrer', '%5%'.toLowerCase());
+            ga('adload.set', 'campaignName', adsa[i]['campaign_title'].toLowerCase());
+            ga('adload.set', 'campaignSource', '%7%'.toLowerCase());
+            ga('adload.set', 'campaignMedium', '%6%'.toLowerCase());
+            ga('adload.set', 'campaignContent', adsa[i]['title'].toLowerCase());
+            ga('adload.send', 'pageview', {
+              'page': '%7%'.toLowerCase(),
+              'title': '%8%'.toLowerCase()
+            });
+        }
+        if(atimer)
+        {
+            clearInterval(atimer);
+            atimer = false;
+        }
+    }
+    else
+    {
+        if(!atimer)
+        {
+            atimer = setInterval(function(){ ang();}, 5);
+        }
+    }
+};
+var timer = false;
+;function showAds(start,end)
+{
+    if (divReady)
+    {
+        adsView="";
+        var box = document.getElementById('adsContainer');
+        while (box.firstChild) {
+              box.removeChild(box.firstChild);
+        }
+        if (end >= ads.length)
+        {
+            start = ads.length - (end - start);
+            end = ads.length;
+        }
+        for (i = start; i < end; i++)
+        {
+            if(ads[i])
+            {
+                adsView+=ads[i];
+            }
+        }
+        cursor+=count;
+        box.innerHTML = adsView;
+        if(timer)
+        {
+            clearInterval(timer);
+            timer = false;
+        }
+        ang();
+    }
+    else
+    {
+        if(!timer)
+        {
+            timer = setInterval(function(){ showAds(start,end);}, 5);
+        }
+    }
+};
+
+;function offerClick(id, ret)
+{
+    if(ret == 0)
+    {
+        uh.exclude_click.add(id,1);
+    }
+    else
+    {
+        uh.retargeting_exclude_click.add(id,1);
+    }
+    uh.save();
+}
+
+function JsonToAds()
+{
+    adsa = [];
+    for(i=0;i<initads.length;i++)
+    {
+        cl = '';
+        if (initads[i]['retargeting'] == '0')
+        {
+            uh.exclude.add(initads[i]['id'],initads[i]['unique']);
+        }
+        else
+        {
+            if (initads[i]['retargeting_type'] == 'offer')
+            {
+                cl = 'Ret';
+                if (initads[i]['is_recommended'] == '1')
+                {
+                    cl = 'Rec';
+                }
+                uh.retargeting_exclude.add(initads[i]['id'],initads[i]['unique']);
+                uh.retargeting_view.add(initads[i]['id']);
+            }
+            else
+            {
+                uh.retargeting_account_exclude.add(initads[i]['id'],initads[i]['unique']);
+            }
+        }
+        ads[i] = '<div class="adv'+cl+'Block"><span track="Header" track_el="'+i+'" t="' + initads[i]['title'] +'" ct="' + initads[i]['campaign_title'] +'" class="adv'+cl+'Header" loc="'
+                + initads[i]['url'] + '" target="_blank" of_id="'+initads[i]['id']+'" of_r="'+initads[i]['retargeting']+'">' +
+                initads[i]['title'] +
+                '</span><span track="Description" track_el="'+i+'" t="' + initads[i]['title'] +'" ct="' + initads[i]['campaign_title'] +'" class="adv'+cl+'Description" loc="' +
+                initads[i]['url'] +
+                '" target="_blank" of_id="'+initads[i]['id']+'" of_r="'+initads[i]['retargeting']+'">' +
+                initads[i]['description'] +
+                '</span><span track="Cost" track_el="'+i+'" t="' + initads[i]['title'] +'" ct="' + initads[i]['campaign_title'] +'" class="adv'+cl+'Cost" loc="' +
+                initads[i]['url'] +
+                '" target="_blank" of_id="'+initads[i]['id']+'" of_r="'+initads[i]['retargeting']+'">' +
+                initads[i]['price'] +
+                '</span><span track="Image" track_el="'+i+'" t="' + initads[i]['title'] +'" ct="' + initads[i]['campaign_title'] +'"  loc="' +
+                initads[i]['url'] +
+                '" target="_blank" of_id="'+initads[i]['id']+'" of_r="'+initads[i]['retargeting']+'"><img class="adv'+cl+'Image" src="' +
+                initads[i]['image'].replace(/png/g,"") + format +
+                '" alt="' +
+                initads[i]['title'] +
+                '"></span></div>';
+        adsa.push(initads[i]);
+    }
+    uh.save();
+};
+
+function createXMLHTTPObject()
+{
+    var xmlhttp = false;
+    for (var i=0;i<XMLHttpFactories.length;i++)
+    {
+        try
+        {
+            xmlhttp = XMLHttpFactories[i]();
+        }
+        catch (e)
+        {
+            continue;
+        }
+        break;
+    }
+    return xmlhttp;
+};
+
+
+function sendRequest(url, calback ,postData)
+{
+    postData = typeof postData == 'string' ? postData : '';
+    var req = createXMLHTTPObject();
+    if (!req)
+    {
+        return;
+    }
+    req.open('POST',url,true);
+    req.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+    req.onreadystatechange = function () {
+        if (req.readyState != 4){
+            return;
+        }
+        if (req.status != 200 && req.status != 304){
+            return;
+        }
+        if (req.status == 200)
+        {
+            calback(req);
+        }
+    };
+    if (req.readyState == 4){
+        return;
+    }
+    req.send(postData);
+};
+
+function pre_load()
+{
+    uh.load();
+    var d = new Date();
+    var params = "rand=" + Math.floor(Math.random() * 1000000) + "&storage=" + Test() + "&d=" + d.getDay() + "&m=" + d.getMinutes() + "&hr=" + d.getHours();
+    var post_date = "";
+    if (Test())
+    {
+        post_date = "exclude=" + uh.exclude_get()
+        + "&retargeting_exclude=" + uh.retargeting_exclude_get()
+        + "&retargeting_account_exclude=" + uh.retargeting_account_exclude_get()
+        + "&retargeting=" + uh.retargeting.get()
+        + "&search_short=" + uh.searchengines.get()
+        + "&context_short=" + uh.context.get()
+        + "&retargeting_view=" + uh.retargeting_view.getString()
+        + "&gender=" + uh.gender_user.get()
+        + "&cost=" + uh.cost_user.get()
+        + "&gender_accounts=" + uh.gender_accounts.get()
+        + "&cost_accounts=" + uh.cost_accounts.get()
+        + "&search=%9%&context=%10%";
+    }
+    sendRequest("%4%"+params,
+    function(req){
+            eval("var resp_obj = (" + req.responseText + ")");
+            uh.exclude_clean(resp_obj.clean);
+            uh.retargeting_clean(resp_obj.clean_retargeting);
+            uh.retargeting_account_clean(resp_obj.clean_account_retargeting);
+            if (resp_obj.item.length > 0)
+            {
+                initads = resp_obj.item;
+                JsonToAds();
+                showAds(cursor,cursor + count);
+                if(notification)
+                {
+                    notifyMe();
+                }
+            }
+            else
+            {
+                if(resp_obj.nonrelevant == 'usercode')
+                {
+                    window.location = "/adshow.fcgi?scr="+ resp_obj.inf +"&show=usercode";
+                }
+            }
+        },
+        post_date
+    );
+};
+
+
+function next()
+{
+    pre_load();
+};
+
+
+function prev()
+{
+    pre_load();
+};
+
+
+function change(cl)
+{
+    var divs = document.getElementsByTagName("DIV");
+    for (var i = 0; i < divs.length; i++)
+    {
+        if (divs[i].className == cl)
+        {
+            divs[i].className=cl+'2';
+        }
+    }
+};
+
+function notshow(notadv) {
+    window.setTimeout(function () {
+        var loc = path + notadv['url'];
+        var instance = new Notification(
+            notadv['title'], {
+                body: notadv["description"],
+                icon: notadv["image"],
+            }
+        );
+
+        instance.onclick = function () {
+            window.open(loc,'_blank');
+        };
+    }, 15000);
+
+    return false;
+};
+
+
+function notifyMe()
+{
+  var i, notif_list = [];
+  var Notification = (window.Notification || window.mozNotification || window.webkitNotification) ;
+  if (Notification == undefined)
+  {
+    return;
+    }
+    for(i=0;i<initads.length;i++)
+    {
+        if (initads[i]['html_notification'] == '1')
+        {
+                notif_list.push({title:initads[i]['title'],description:initads[i]['description'],image:initads[i]['image'],url:initads[i]['url']});
+        }
+    }
+    if (notif_list.length > 0)
+    {
+        Notification.requestPermission(function (permission) {});
+        for(i=0;i<notif_list.length;i++)
+        {
+            notshow(notif_list[i]);
+            break;
+        }
+    }
+    else
+    {
+        Notification.requestPermission(function (permission) {});
+    }
+
+};
+
+function change1(cl)
+{
+    var divs = document.getElementsByTagName("DIV");
+    for (var i = 0; i < divs.length; i++)
+    {
+        if (divs[i].className == cl+"2")
+        {
+            divs[i].className=cl;
+        }
+        if (divs[i].className == cl + "2")
+        {
+            divs[i].className=cl+'1';
+        }
+    }
+};
+if (initads.length >= count)
+{
+    JsonToAds();
+    showAds(cursor,cursor + count);
+}
+else
+{
+    pre_load();
+}
+</script>
+</head>
+<body>
+  <div id="mainContainer">
+  	<div id='mainHeader'>%12%</div>
+  	<div id='adsContainer'></div>
+    <script>
+        divReady=true;
+    </script>
+    <div id="adInfo">
+        <a href="http://blog.yottos.com/proekty-yottos/adload/" target="_blank" title="Реклама от Yottos"></a>
+    </div>
+    <a href='javascript:prev();'>
+        <div class="navr" id='nav_r' style="display:none" onmouseover="change('b');" onmouseout="change1('b');" >
+            <div id="leftArrow" style="width:12;height:16px;">
+                <div class="b1" style="left:3px;top:7px;"></div>
+                <div class="b1" style="left:3px;top:8px;"></div>
+                <div class="b1" style="left:4px;top:6px;"></div>
+                <div class="b1" style="left:4px;top:7px;"></div><div class="b1" style="left:4px;top:8px;"></div><div class="b1" style="left:4px;top:9px;"></div>
+                <div class="b1" style="left:5px;top:5px;"></div><div class="b1" style="left:5px;top:6px;"></div><div class="b1" style="left:5px;top:7px;"></div>
+                <div class="b1" style="left:5px;top:8px;"></div><div class="b1" style="left:5px;top:9px;"></div><div class="b1" style="left:5px;top:10px;"></div>
+                <div class="b1" style="left:6px;top:4px;"></div><div class="b1" style="left:6px;top:5px;"></div><div class="b1" style="left:6px;top:6px;"></div><div class="b1" style="left:6px;top:9px;"></div><div class="b1" style="left:6px;top:10px;"></div><div class="b1" style="left:6px;top:11px;"></div><div class="b1" style="left:7px;top:3px;"></div><div class="b1" style="left:7px;top:4px;"></div><div class="b1" style="left:7px;top:5px;"></div><div class="b1" style="left:7px;top:10px;"></div><div class="b1" style="left:7px;top:11px;"></div><div class="b1" style="left:7px;top:12px;"></div><div class="b1" style="left:8px;top:2px;"></div><div class="b1" style="left:8px;top:3px;"></div><div class="b1" style="left:8px;top:4px;"></div><div class="b1" style="left:8px;top:11px;"></div><div class="b1" style="left:8px;top:12px;"></div><div class="b1" style="left:8px;top:13px;"></div>
+                <div class="b" style="left:0px;top:7px;"></div><div class="b" style="left:0px;top:8px;"></div><div class="b" style="left:1px;top:6px;"></div>
+                <div class="b" style="left:1px;top:7px;"></div><div class="b" style="left:1px;top:8px;"></div><div class="b" style="left:1px;top:9px;"></div>
+                <div class="b" style="left:2px;top:5px;"></div><div class="b" style="left:2px;top:6px;"></div><div class="b" style="left:2px;top:7px;"></div><div class="b" style="left:2px;top:8px;"></div><div class="b" style="left:2px;top:9px;"></div><div class="b" style="left:2px;top:10px;"></div><div class="b" style="left:3px;top:4px;"></div><div class="b" style="left:3px;top:5px;"></div><div class="b" style="left:3px;top:6px;"></div><div class="b" style="left:3px;top:9px;"></div><div class="b" style="left:3px;top:10px;"></div><div class="b" style="left:3px;top:11px;"></div><div class="b" style="left:4px;top:3px;"></div><div class="b" style="left:4px;top:4px;"></div><div class="b" style="left:4px;top:5px;"></div><div class="b" style="left:4px;top:10px;"></div><div class="b" style="left:4px;top:11px;"></div><div class="b" style="left:4px;top:12px;"></div><div class="b" style="left:5px;top:2px;"></div><div class="b" style="left:5px;top:3px;"></div><div class="b" style="left:5px;top:4px;"></div><div class="b" style="left:5px;top:11px;"></div><div class="b" style="left:5px;top:12px;"></div><div class="b" style="left:5px;top:13px;"></div><div class="b" style="left:6px;top:1px;"></div><div class="b" style="left:6px;top:2px;"></div><div class="b" style="left:6px;top:3px;"></div><div class="b" style="left:6px;top:7px;"></div><div class="b" style="left:6px;top:8px;"></div><div class="b" style="left:6px;top:12px;"></div><div class="b" style="left:6px;top:13px;"></div><div class="b" style="left:6px;top:14px;"></div><div class="b" style="left:7px;top:0px;"></div><div class="b" style="left:7px;top:1px;"></div><div class="b" style="left:7px;top:2px;"></div><div class="b" style="left:7px;top:6px;"></div><div class="b" style="left:7px;top:7px;"></div><div class="b" style="left:7px;top:8px;"></div><div class="b" style="left:7px;top:9px;"></div><div class="b" style="left:7px;top:13px;"></div><div class="b" style="left:7px;top:14px;"></div><div class="b" style="left:7px;top:15px;"></div><div class="b" style="left:8px;top:0px;"></div><div class="b" style="left:8px;top:1px;"></div><div class="b" style="left:8px;top:5px;"></div><div class="b" style="left:8px;top:6px;"></div><div class="b" style="left:8px;top:7px;"></div><div class="b" style="left:8px;top:8px;"></div><div class="b" style="left:8px;top:9px;"></div><div class="b" style="left:8px;top:10px;"></div><div class="b" style="left:8px;top:14px;"></div><div class="b" style="left:8px;top:15px;"></div><div class="b" style="left:9px;top:0px;"></div><div class="b" style="left:9px;top:1px;"></div><div class="b" style="left:9px;top:2px;"></div><div class="b" style="left:9px;top:3px;"></div><div class="b" style="left:9px;top:4px;"></div><div class="b" style="left:9px;top:5px;"></div><div class="b" style="left:9px;top:6px;"></div><div class="b" style="left:9px;top:7px;"></div><div class="b" style="left:9px;top:8px;"></div><div class="b" style="left:9px;top:9px;"></div><div class="b" style="left:9px;top:10px;"></div><div class="b" style="left:9px;top:11px;"></div><div class="b" style="left:9px;top:12px;"></div><div class="b" style="left:9px;top:13px;"></div><div class="b" style="left:9px;top:14px;"></div><div class="b" style="left:9px;top:15px;"></div><div class="b" style="left:10px;top:0px;"></div><div class="b" style="left:10px;top:1px;"></div><div class="b" style="left:10px;top:2px;"></div><div class="b" style="left:10px;top:3px;"></div><div class="b" style="left:10px;top:4px;"></div><div class="b" style="left:10px;top:5px;"></div><div class="b" style="left:10px;top:6px;"></div><div class="b" style="left:10px;top:7px;"></div><div class="b" style="left:10px;top:8px;"></div><div class="b" style="left:10px;top:9px;"></div><div class="b" style="left:10px;top:10px;"></div><div class="b" style="left:10px;top:11px;"></div><div class="b" style="left:10px;top:12px;"></div><div class="b" style="left:10px;top:13px;"></div><div class="b" style="left:10px;top:14px;"></div>
+                <div class="b" style="left:10px;top:15px;"></div>
+            </div>
+        </div>
+    </a>
+    <a href='javascript:next();'>
+        <div class="nav" id="nav_l" onmouseover="change('c');" onmouseout="change1('c');" >
+            <div id="rightArrow" style="width:12;height:16px;">
+                <div class="c1" style="left:2px;top:2px;"></div>
+                <div class="c1" style="left:2px;top:3px;"></div>
+                <div class="c1" style="left:2px;top:4px;"></div><div class="c1" style="left:2px;top:11px;"></div>
+                <div class="c1" style="left:2px;top:12px;"></div>
+                <div class="c1" style="left:2px;top:13px;"></div>
+                <div class="c1" style="left:3px;top:3px;"></div>
+                <div class="c1" style="left:3px;top:4px;"></div>
+                <div class="c1" style="left:3px;top:5px;"></div>
+                <div class="c1" style="left:3px;top:10px;"></div>
+                <div class="c1" style="left:3px;top:11px;"></div><div class="c1" style="left:3px;top:12px;"></div><div class="c1" style="left:4px;top:4px;"></div><div class="c1" style="left:4px;top:5px;"></div><div class="c1" style="left:4px;top:6px;"></div><div class="c1" style="left:4px;top:9px;"></div><div class="c1" style="left:4px;top:10px;"></div><div class="c1" style="left:4px;top:11px;"></div><div class="c1" style="left:5px;top:5px;"></div><div class="c1" style="left:5px;top:6px;"></div><div class="c1" style="left:5px;top:7px;"></div><div class="c1" style="left:5px;top:8px;"></div><div class="c1" style="left:5px;top:9px;"></div><div class="c1" style="left:5px;top:10px;"></div><div class="c1" style="left:6px;top:6px;"></div><div class="c1" style="left:6px;top:7px;"></div><div class="c1" style="left:6px;top:8px;"></div><div class="c1" style="left:6px;top:9px;"></div><div class="c1" style="left:7px;top:7px;"></div><div class="c1" style="left:7px;top:8px;"></div>
+                <div class="c" style="left:0px;top:0px;"></div><div class="c" style="left:0px;top:1px;"></div><div class="c" style="left:0px;top:2px;"></div><div class="c" style="left:0px;top:3px;"></div><div class="c" style="left:0px;top:4px;"></div><div class="c" style="left:0px;top:5px;"></div><div class="c" style="left:0px;top:6px;"></div><div class="c" style="left:0px;top:7px;"></div><div class="c" style="left:0px;top:8px;"></div><div class="c" style="left:0px;top:9px;"></div><div class="c" style="left:0px;top:10px;"></div><div class="c" style="left:0px;top:11px;"></div><div class="c" style="left:0px;top:12px;"></div><div class="c" style="left:0px;top:13px;"></div><div class="c" style="left:0px;top:14px;"></div><div class="c" style="left:0px;top:15px;"></div><div class="c" style="left:1px;top:0px;"></div><div class="c" style="left:1px;top:1px;"></div><div class="c" style="left:1px;top:2px;"></div><div class="c" style="left:1px;top:3px;"></div><div class="c" style="left:1px;top:4px;"></div><div class="c" style="left:1px;top:5px;"></div><div class="c" style="left:1px;top:6px;"></div><div class="c" style="left:1px;top:7px;"></div><div class="c" style="left:1px;top:8px;"></div><div class="c" style="left:1px;top:9px;"></div><div class="c" style="left:1px;top:10px;"></div><div class="c" style="left:1px;top:11px;"></div><div class="c" style="left:1px;top:12px;"></div><div class="c" style="left:1px;top:13px;"></div><div class="c" style="left:1px;top:14px;"></div><div class="c" style="left:1px;top:15px;"></div><div class="c" style="left:2px;top:0px;"></div><div class="c" style="left:2px;top:1px;"></div><div class="c" style="left:2px;top:5px;"></div><div class="c" style="left:2px;top:6px;"></div><div class="c" style="left:2px;top:7px;"></div><div class="c" style="left:2px;top:8px;"></div><div class="c" style="left:2px;top:9px;"></div><div class="c" style="left:2px;top:10px;"></div><div class="c" style="left:2px;top:14px;"></div><div class="c" style="left:2px;top:15px;"></div><div class="c" style="left:3px;top:0px;"></div><div class="c" style="left:3px;top:1px;"></div><div class="c" style="left:3px;top:2px;"></div><div class="c" style="left:3px;top:6px;"></div><div class="c" style="left:3px;top:7px;"></div><div class="c" style="left:3px;top:8px;"></div><div class="c" style="left:3px;top:9px;"></div><div class="c" style="left:3px;top:13px;"></div><div class="c" style="left:3px;top:14px;"></div><div class="c" style="left:3px;top:15px;"></div><div class="c" style="left:4px;top:1px;"></div><div class="c" style="left:4px;top:2px;"></div><div class="c" style="left:4px;top:3px;"></div><div class="c" style="left:4px;top:7px;"></div><div class="c" style="left:4px;top:8px;"></div><div class="c" style="left:4px;top:12px;"></div><div class="c" style="left:4px;top:13px;"></div><div class="c" style="left:4px;top:14px;"></div><div class="c" style="left:5px;top:2px;"></div><div class="c" style="left:5px;top:3px;"></div><div class="c" style="left:5px;top:4px;"></div><div class="c" style="left:5px;top:11px;"></div><div class="c" style="left:5px;top:12px;"></div><div class="c" style="left:5px;top:13px;"></div><div class="c" style="left:6px;top:3px;"></div><div class="c" style="left:6px;top:4px;"></div><div class="c" style="left:6px;top:5px;"></div><div class="c" style="left:6px;top:10px;"></div><div class="c" style="left:6px;top:11px;"></div><div class="c" style="left:6px;top:12px;"></div><div class="c" style="left:7px;top:4px;"></div><div class="c" style="left:7px;top:5px;"></div><div class="c" style="left:7px;top:6px;"></div><div class="c" style="left:7px;top:9px;"></div><div class="c" style="left:7px;top:10px;"></div><div class="c" style="left:7px;top:11px;"></div><div class="c" style="left:8px;top:5px;"></div><div class="c" style="left:8px;top:6px;"></div><div class="c" style="left:8px;top:7px;"></div><div class="c" style="left:8px;top:8px;"></div><div class="c" style="left:8px;top:9px;"></div><div class="c" style="left:8px;top:10px;"></div><div class="c" style="left:9px;top:6px;"></div><div class="c" style="left:9px;top:7px;"></div><div class="c" style="left:9px;top:8px;"></div><div class="c" style="left:9px;top:9px;"></div><div class="c" style="left:10px;top:7px;"></div>
+                <div class="c" style="left:10px;top:8px;"></div>
+            </div>
+        </div>
+    </a>
+  	<div id='mainFooter'>%13%</div>
+</div>
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-41316393-1', 'auto');
+ga('create', 'UA-72334837-1', 'auto', {'name': 'adload'});
+</script>
+</body>
+</html>
