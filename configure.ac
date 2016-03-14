@@ -1,6 +1,6 @@
 dnl Process this file with autoconf
 
-AC_INIT([workerd], m4_esyscmd([echo -n $(git describe --tags --long | sed "s/v\([0-9]\.[0-9]-.*\)-.*/\1/")]), [kyzmenko.pavel@gmail.com])
+AC_INIT([worker-informer], m4_esyscmd([echo -n $(git describe --all --tags --long | sed "s/v\([0-9]\.[0-9]-.*\)-.*/\1/")]), [kyzmenko.pavel@gmail.com])
 
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE
@@ -54,17 +54,6 @@ AC_TYPE_UINT32_T
 AC_TYPE_UINT64_T
 AC_TYPE_UINT8_T
 
-AC_ARG_ENABLE(dummy,
-AS_HELP_STRING([--enable-dummy],
-	[enable dummy mode, default: no]),
-		[case "${enableval}" in
-		yes) dummy=true ;;
-		no)  dummy=false ;;
-		*)   AC_MSG_ERROR([bad value ${enableval} for --enable-dummy]) ;;
-		esac],
-		[dummy=false])
-AM_CONDITIONAL(DUMMY, test x"$dummy" = x"true")
-
 AC_ARG_ENABLE(debug,
 AS_HELP_STRING([--enable-debug],
 	[enable debugging, default: no]),
@@ -77,13 +66,6 @@ AS_HELP_STRING([--enable-debug],
 AM_CONDITIONAL(DEBUG, test x"$debug" = x"true")
 
 
-if test "x$dummy" = "xfalse" ; then
-AC_CHECK_LIB([sphinxclient], [sphinx_add_query], [], [AC_MSG_ERROR([sphinxclient was not found])])
-else
-AC_DEFINE(DUMMY,[1],[dummy worker])
-fi
-
-dnl AC_CONFIG_LIBOBJ_DIR([libs/amqpcpp])
 AC_CHECK_LIB([amqpcpp],[main],[],[AC_MSG_ERROR([amqpcpp library missing])])
 AC_CHECK_LIB([mongoclient],[main],[],[AC_MSG_ERROR([mongoclient(mongodb build with client shared library) missing])])
 

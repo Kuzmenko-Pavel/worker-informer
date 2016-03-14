@@ -12,8 +12,6 @@
 #include "BaseCore.h"
 #include "base64.h"
 #include "Informer.h"
-#include "Campaign.h"
-#include "Offer.h"
 #include "Config.h"
 #include "CpuStat.h"
 
@@ -24,10 +22,10 @@ BaseCore::BaseCore()
     time_service_started_ = boost::posix_time::second_clock::local_time();
 
     pdb = new ParentDB();
+    
+    InitMessageQueue();
 
     LoadAllEntities();
-
-    InitMessageQueue();
 }
 
 BaseCore::~BaseCore()
@@ -61,83 +59,6 @@ bool BaseCore::ProcessMQ()
     try
     {
         {
-            // Проверка сообщений campaign.#
-            mq_campaign_->Get(AMQP_NOACK);
-            m = mq_campaign_->getMessage();
-            stopCount = MAXCOUNT;
-            while(m->getMessageCount() > -1 && stopCount--)
-            {
-                mq_log_.push_back(m->getRoutingKey() + ":" +toString(m) + "</br>");
-                if(cfg->logMQ)
-                {
-                    std::clog<<"mq: cmd:"<<m->getRoutingKey()<<toString(m)<<std::endl;
-                }
-
-                if(m->getRoutingKey() == "campaign.update")
-                {
-                    std::string CampaignId = toString(m);
-                    pdb->CampaignLoad(CampaignId);
-                }
-                else if(m->getRoutingKey() == "campaign.delete")
-                {
-                    pdb->CampaignRemove(toString(m));
-                }
-                else if(m->getRoutingKey() == "campaign.start")
-                {
-                    std::string CampaignId = toString(m);
-                    pdb->CampaignLoad(CampaignId);
-                }
-                else if(m->getRoutingKey() == "campaign.stop")
-                {
-                    std::string CampaignId = toString(m);
-                    pdb->CampaignRemove(CampaignId);
-                }
-
-                mq_campaign_->Get(AMQP_NOACK);
-                m = mq_campaign_->getMessage();
-            }
-        }
-        {
-            // Проверка сообщений advertise.#
-            std::string m1, ofrId, cmgId;
-            mq_advertise_->Get(AMQP_NOACK);
-            m = mq_advertise_->getMessage();
-            stopCount = MAXCOUNT;
-            while(m->getMessageCount() > -1 && stopCount--)
-            {
-                mq_log_.push_back(m->getRoutingKey() + ":" +toString(m) + "</br>");
-
-                if(cfg->logMQ)
-                {
-                    std::clog<<"mq: cmd:"<<m->getRoutingKey()<<toString(m)<<std::endl;
-                }
-
-                m1 = toString(m);
-                if(m->getRoutingKey() == "advertise.update")
-                {
-                    if(cmdParser(m1,ofrId,cmgId))
-                    {
-                        mongo::Query q;
-#ifdef DUMMY
-                        q = mongo::Query("{$and: [{ \"retargeting\" : false}, {\"type\" : \"teaser\"}, { \"guid\" : \""+ofrId+"\"}]}");
-#else
-                        q = QUERY("guid" << ofrId);
-#endif // DUMMY
-                        pdb->OfferRatingLoad(q);
-                    }
-                }
-                else if(m->getRoutingKey() == "advertise.delete")
-                {
-                    if(cmdParser(m1,ofrId,cmgId))
-                    {
-                        pdb->OfferRemove(ofrId);
-                    }
-                }
-                mq_advertise_->Get(AMQP_NOACK);
-                m = mq_advertise_->getMessage();
-            }
-        }
-        {
             // Проверка сообщений informer.#
             mq_informer_->Get(AMQP_NOACK);
             m = mq_informer_->getMessage();
@@ -158,10 +79,6 @@ bool BaseCore::ProcessMQ()
                 else if(m->getRoutingKey() == "informer.delete")
                 {
                     pdb->InformerRemove(toString(m));
-                }
-                else if(m->getRoutingKey() == "informer.updateRating")
-                {
-                    pdb->loadRating(toString(m));
                 }
                 mq_informer_->Get(AMQP_NOACK);
                 m = mq_informer_->getMessage();
@@ -184,7 +101,6 @@ bool BaseCore::ProcessMQ()
                 if(m->getRoutingKey() == "account.update")
                 {
                     std::string accountName = toString(m);
-                    pdb->AccountLoad(QUERY("login" << accountName));
                     pdb->InformerUpdate(QUERY("user" << accountName));
                 }
 
@@ -217,31 +133,10 @@ void BaseCore::LoadAllEntities()
     {
         return;
     }
-
-    //accounts load
-    pdb->AccountLoad();
-    //device load
-    pdb->DeviceLoad();
-
     //Загрузили все информеры
     pdb->InformerLoadAll();
 
-    //Загрузили все кампании
-    pdb->CampaignLoadWhitOutRetargetingOnly();
-
     //загрузили рейтинг
-    pdb->loadRating();
-    cfg->pDb->indexRebuild();
-
-}
-void BaseCore::LoadRetargetingEntities()
-{
-    if(Config::Instance()->pDb->reopen)
-    {
-        return;
-    }
-    //Загрузили все кампании
-    pdb->CampaignLoadRetargetingOnly();
     cfg->pDb->indexRebuild();
 
 }
@@ -266,29 +161,21 @@ void BaseCore::InitMessageQueue()
         std::string postfix = to_iso_string(now);
         boost::replace_first(postfix, ".", ",");
 
-        std::string mq_advertise_name( "getmyad.advertise." + postfix );
-        std::string mq_campaign_name( "getmyad.campaign." + postfix );
         std::string mq_informer_name( "getmyad.informer." + postfix );
         std::string mq_account_name( "getmyad.account." + postfix );
 
         // Объявляем очереди
-        mq_campaign_ = amqp_->createQueue();
-        mq_campaign_->Declare(mq_campaign_name, AMQP_AUTODELETE | AMQP_EXCLUSIVE);
         mq_informer_ = amqp_->createQueue();
         mq_informer_->Declare(mq_informer_name, AMQP_AUTODELETE | AMQP_EXCLUSIVE);
-        mq_advertise_ = amqp_->createQueue();
-        mq_advertise_->Declare(mq_advertise_name, AMQP_AUTODELETE | AMQP_EXCLUSIVE);
         mq_account_ = amqp_->createQueue();
         mq_account_->Declare(mq_account_name, AMQP_AUTODELETE | AMQP_EXCLUSIVE);
 
         // Привязываем очереди
-        exchange_->Bind(mq_advertise_name, "advertise.#");
-        exchange_->Bind(mq_campaign_name, "campaign.#");
         exchange_->Bind(mq_informer_name, "informer.#");
         exchange_->Bind(mq_account_name, "account.#");
 
-        std::clog<<"Created ampq queues: "<<mq_campaign_name<<","<<mq_informer_name<<","
-                 <<mq_advertise_name<<","<<mq_account_name<<std::endl;
+        std::clog<<"Created ampq queues: "<<mq_informer_name<<","
+                 <<mq_account_name<<std::endl;
     }
     catch (AMQPException &ex)
     {
@@ -298,7 +185,7 @@ void BaseCore::InitMessageQueue()
 
 /** Возвращает расширенные данные о состоянии службы
  */
-std::string BaseCore::Status(const std::string &server_name, bool fullData)
+std::string BaseCore::Status(const std::string &server_name)
 {
     std::stringstream out;
 
@@ -341,20 +228,13 @@ std::string BaseCore::Status(const std::string &server_name, bool fullData)
     out << "</style>";
     out << "</head>";
     out << "<body>";
-#ifdef DUMMY
-    out << "<h1>Состояние службы Yottos GetMyAd dummy worker</h1>";
-#else
     out << "<h1>Состояние службы Yottos GetMyAd worker</h1>";
-#endif
     out << "<table>";
     out << "<tr>";
     out << "<td>Обработано запросов:</td><td><b>" << request_processed_;
     out << "</b> (" << requests_per_second_current << "/сек, ";
     out << " в среднем " << requests_per_second_average << "/сек) ";
     out << "</td></tr>";
-    out << "<tr><td>Общее кол-во показов:</td><td><b>" << offer_processed_;
-    out << "</b> (" << social_processed_ << " из них социальная реклама) "<< "</td></tr>";
-    out << "<tr><td>Общее кол-во ретаргетинговых показов:</td><td><b>" << retargeting_processed_<< "</b></td></tr>";
     out << "<tr><td>Имя сервера: </td> <td>" << (server_name.empty() ? server_name : "неизвестно") <<"</td></tr>";
     out << "<tr><td>IP сервера: </td> <td>" <<Config::Instance()->server_ip_ <<"</td></tr>";
     out << "<tr><td>Текущее время: </td> <td>"<<boost::posix_time::second_clock::local_time()<<"</td></tr>";
@@ -363,13 +243,6 @@ std::string BaseCore::Status(const std::string &server_name, bool fullData)
     out << "<tr><td>CPU user: </td> <td>" << CpuStat::cpu_user << "</td></tr>";
     out << "<tr><td>CPU sys: </td> <td>" << CpuStat::cpu_sys << "</td></tr>";
     out << "<tr><td>RAM: </td> <td>" << CpuStat::rss << "</td></tr>";
-
-    if(!fullData)
-    {
-        out << "</body>";
-        out << "</html>";
-        return out.str();
-    }
 
     out << "<tr><td>Основная база данных:</td> <td>" <<
         cfg->mongo_main_db_<< "/";
@@ -380,91 +253,9 @@ std::string BaseCore::Status(const std::string &server_name, bool fullData)
     else
         out << cfg->mongo_main_set_;
     out << "</td></tr>";
-
-    out << "<tr><td>База данных журналирования: </td> <td>" << cfg->mongo_log_db_;
-    out << "</br>slave_ok = " << (cfg->mongo_log_slave_ok_? "true" : "false");
-    out << "</br>replica set = ";
-    if (cfg->mongo_log_set_.empty())
-        out << " no ";
-    else
-        out << cfg->mongo_log_set_;
-    out << "</td></tr>";
-
-
     out << "<tr><td>AMQP:</td><td>" << (amqp_? "активен" : "не активен") << "</td></tr>";
     out <<  "<tr><td>Сборка: </td><td>" << __DATE__ << " " << __TIME__<<"</td></tr>";
-    //out <<  "<tr><td>Драйвер mongo: </td><td>" << mongo::versionString << "</td></tr>";
     out << "</table>";
-
-    std::vector<Campaign*> campaigns;
-    Campaign::info(campaigns,"plase");
-
-    out << "<p>Загружено <b>" << campaigns.size() << "</b> таргеринговых кампаний: </p>\n";
-    out << "<table><tr>\n"
-        "<th>Наименование</th>"
-        "<th>Социальная</th>"
-        "<th>Предложений</th>"
-        "<th>Показываеться на</th>"
-        "</tr>\n";
-
-
-    for (auto it = campaigns.begin(); it != campaigns.end(); it++)
-    {
-        out << "<tr>" <<
-            "<td>" << (*it)->title << "</td>" <<
-            "<td>" << ((*it)->social ? "Да" : "Нет") << "</td>" <<
-            "<td>" << (*it)->offersCount << "</td>"<<
-            "<td>" << (*it)->getType() << "</td>"<<
-            "</tr>\n";
-        delete *it;
-    }
-    out << "</table>";
-    campaigns.clear();
-
-    Campaign::info(campaigns,"account");
-    out << "<p>Загружено <b>" << campaigns.size() << "</b> ретаргеринговых кампаний нa аккаунт: </p>\n";
-    out << "<table><tr>\n"
-        "<th>Наименование</th>"
-        "<th>Социальная</th>"
-        "<th>Предложений</th>"
-        "<th>Показываеться на</th>"
-        "</tr>\n";
-
-    for (auto it = campaigns.begin(); it != campaigns.end(); it++)
-    {
-        out << "<tr>" <<
-            "<td>" << (*it)->title << "</td>" <<
-            "<td>" << ((*it)->social ? "Да" : "Нет") << "</td>" <<
-            "<td>" << (*it)->offersCount << "</td>"<<
-            "<td>" << (*it)->getType() << "</td>"<<
-            "</tr>\n";
-        delete *it;
-    }
-    out << "</table>";
-    campaigns.clear();
-
-    Campaign::info(campaigns,"offer");
-    out << "<p>Загружено <b>" << campaigns.size() << "</b> ретаргеринговых кампаний на товар: </p>\n";
-    out << "<table><tr>\n"
-        "<th>Наименование</th>"
-        "<th>Социальная</th>"
-        "<th>Предложений</th>"
-        "<th>Показываеться на</th>"
-        "</tr>\n";
-
-    for (auto it = campaigns.begin(); it != campaigns.end(); it++)
-    {
-        out << "<tr>" <<
-            "<td>" << (*it)->title << "</td>" <<
-            "<td>" << ((*it)->social ? "Да" : "Нет") << "</td>" <<
-            "<td>" << (*it)->offersCount << "</td>"<<
-            "<td>" << (*it)->getType() << "</td>"<<
-            "</tr>\n";
-        delete *it;
-    }
-    out << "</table>";
-    campaigns.clear();
-
     // Журнал сообщений AMQP
     out << "<p>Журнал AMQP: </p>"
         "<table>";
@@ -482,18 +273,3 @@ std::string BaseCore::Status(const std::string &server_name, bool fullData)
 
     return out.str();
 }
-
-bool BaseCore::cmdParser(const std::string &cmd, std::string &offerId, std::string &campaignId)
-{
-    boost::regex exp("Offer:(.*),Campaign:(.*)");
-    boost::cmatch pMatch;
-
-    if(boost::regex_match(cmd.c_str(), pMatch, exp))
-    {
-        offerId = pMatch[1];
-        campaignId = pMatch[2];
-        return true;
-    }
-    return false;
-}
-
