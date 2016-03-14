@@ -89,10 +89,6 @@ private:
     BaseCore *bcore;
     pthread_t *threads;
     CpuStat *stat;
-    bool fConnectedToLogDatabase;
-
-    mongo::DBClientReplicaSet *monga_log;
-    bool ConnectLogDatabase();
     static void SignalHandler(int signum);
 };
 

@@ -3,9 +3,6 @@
 
 #include <string>
 
-typedef long long			sphinx_int64_t;
-typedef unsigned long long	sphinx_uint64_t;
-
 /**
     \brief Класс, описывающий рекламную выгрузку
 */
@@ -19,10 +16,6 @@ public:
         std::string teasersCss;                 //Стиль CSS РБ для отображения тизеров
         std::string headerHtml;
         std::string footerHtml;
-        long domainId;
-        std::string domain;
-        long accountId;
-        std::string account;
         unsigned retargeting_capacity;
         double range_short_term, range_long_term, range_context, range_search, range_category;
 
@@ -39,14 +32,25 @@ public:
         int width_banner;                       //Ширина отображаемых банеров
 
     Informer(long id);
-    Informer(long id, const std::string &title,
+    Informer(long id,
+            const std::string &title,
             unsigned int capacity,
             const std::string &bannersCss,
             const std::string &teasersCss,
             const std::string &headerHtml,
             const std::string &footerHtml,
-            long, const std::string &domain, long, const std::string &account,
-            double, double, double, double, double, int, bool, const std::string &nonrelevant, const std::string &user_code, bool, bool, bool);
+            double retargeting_capacity,
+            double range_short_term,
+            double range_long_term,
+            double range_context,
+            double range_search,
+            int range_category,
+            bool valid,
+            const std::string &nonrelevant,
+            const std::string &user_code,
+            bool html_notification,
+            bool plase_branch,
+            bool retargeting_branch);
     virtual ~Informer();
 
     bool is_null() const
@@ -56,16 +60,7 @@ public:
 
     bool operator==(const Informer &other) const;
     bool operator<(const Informer &other) const;
-
-    bool isShortTerm() const {return range_short_term > 0;}
-    bool isLongTerm() const {return range_long_term > 0;}
-    bool isContext() const {return range_context > 0;}
-    bool isSearch() const {return range_search > 0;}
-    bool isCategory() const {return range_category > 0;}
-    bool sphinxProcessEnable() const {
-        return range_short_term > 0 || range_long_term > 0 || range_context > 0 || range_search > 0
-        || range_category > 0;}
-
+    std::string toJson() const;
 private:
 
 };

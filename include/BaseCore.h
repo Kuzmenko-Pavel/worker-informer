@@ -36,25 +36,15 @@ public:
      */
     ~BaseCore();
 
-    /** \brief  Загружает все сущности, которые используются при показе
-     *          рекламы. */
-    void LoadAllEntities();
-    void LoadRetargetingEntities();
-
-    void ReloadAllEntities();
-
     /** \brief  Обрабатывает новые сообщения в очереди RabbitMQ. */
     bool ProcessMQ();
 
     /** \brief  Выводит состояние службы и некоторую статистику */
-    std::string Status(const std::string &,bool);
-
-       //clear session table
-    bool ClearSession(bool clearAll) { return pdb->ClearSession(clearAll); }
-
+    std::string Status(const std::string &);
 
 private:
     void InitMessageQueue();
+    void LoadAllEntities();
 
  /// Время запуска службы
     boost::posix_time::ptime time_service_started_,time_mq_check_;
@@ -63,21 +53,17 @@ private:
 
     /// Точка обмена
     AMQPExchange *exchange_;
-    /// Очередь сообщений об изменениях в кампаниях
-    AMQPQueue *mq_campaign_;
 
     /// Очередь сообщений об изменениях в информерах
     AMQPQueue *mq_informer_;
 
-   /// Очередь сообщений об изменениях в offer
-    AMQPQueue *mq_advertise_;
     /// Очередь сообщений об изменениях в конфигурации
     AMQPQueue *mq_account_;
 
     std::string toString(AMQPMessage *m);
-    bool cmdParser(const std::string &cmd, std::string &offerId, std::string &campaignId);
-    ParentDB *pdb;
     boost::circular_buffer<string> mq_log_ = boost::circular_buffer<string>(100);
+
+    ParentDB *pdb;
 };
 
 
