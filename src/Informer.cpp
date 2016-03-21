@@ -7,7 +7,7 @@ Informer::Informer(long id) :
 {
 }
 
-Informer::Informer(long id, const std::string &title, unsigned int capacity, const std::string &bannersCss,
+Informer::Informer(long id, const std::string &title, unsigned int capacity, unsigned int auto_reload, const std::string &bannersCss,
                    const std::string &teasersCss,
                    const std::string &headerHtml,
                    const std::string &footerHtml,
@@ -17,6 +17,7 @@ Informer::Informer(long id, const std::string &title, unsigned int capacity, con
     id(id),
     title(title),
     capacity(capacity),
+    auto_reload(auto_reload),
     bannersCss(bannersCss),
     teasersCss(teasersCss),
     headerHtml(headerHtml),
@@ -52,23 +53,21 @@ bool Informer::operator<(const Informer &other) const
 }
 std::string Informer::toJson() const
 {
-    std::stringstream str_json;
+    nlohmann::json j;
+    j["informer_id_int"] = id;
+    j["title"] = title;
+    j["capacity"] = capacity;
+    j["auto_reload"] = auto_reload;
+    //j["bannersCss"] = bannersCss;
+    j["teasersCss"] = teasersCss;
+    j["headerHtml"] = headerHtml;
+    j["footerHtml"] = footerHtml;
+    j["retargeting_capacity"] = retargeting_capacity;
+    j["nonrelevant"] = nonrelevant;
+    j["user_code"] = user_code;
+    j["html_notification"] = html_notification;
+    j["plase_branch"] = plase_branch;
+    j["retargeting_branch"] = retargeting_branch;
 
-    str_json << "{" <<
-        "\"informer_id_int\": " << id << "," <<
-        "\"title\": \"" << Json::Utils::Escape(title) << "\"," <<
-        "\"capacity\": " << capacity << "," <<
-        "\"bannersCss\": \"" << Json::Utils::Escape(bannersCss) << "\"," <<
-        "\"teasersCss\": \"" << Json::Utils::Escape(teasersCss) << "\"," <<
-        "\"headerHtml\": \"" << Json::Utils::Escape(headerHtml) << "\"," <<
-        "\"footerHtml\": \"" << Json::Utils::Escape(footerHtml) << "\"," <<
-        "\"retargeting_capacity\": " << retargeting_capacity << "," <<
-        "\"nonrelevant\": \"" << Json::Utils::Escape(nonrelevant) << "\"," <<
-        "\"user_code\": \"" << Json::Utils::Escape(user_code) << "\"," <<
-        "\"html_notification\": " << Json::Utils::Escape(html_notification) << "," <<
-        "\"plase_branch\": " << Json::Utils::Escape(plase_branch) << "," <<
-        "\"retargeting_branch\": " << Json::Utils::Escape(retargeting_branch) <<
-         "}";
-
-    return str_json.str();
+    return j.dump();
 }

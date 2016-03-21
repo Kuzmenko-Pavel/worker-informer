@@ -61,7 +61,6 @@ Params &Params::cookie_id(const std::string &cookie_id)
 
     return *this;
 }
-
 Params &Params::informer_id(const std::string &informer_id)
 {
     informer_id_ = informer_id;
@@ -71,6 +70,11 @@ Params &Params::informer_id(const std::string &informer_id)
 Params &Params::informer_id_int(long long &informer_id_int)
 {
     informer_id_int_ = informer_id_int;
+    return *this;
+}
+Params &Params::capacity(unsigned int &capacity)
+{
+    capacity_ = capacity;
     return *this;
 }
 Params &Params::country(const std::string &country)
@@ -242,25 +246,23 @@ std::string Params::getDevice() const
 
 std::string Params::toJson() const
 {
-    std::stringstream str_json;
+    nlohmann::json j;
+    j["ip"] = ip_;
+    j["informer_id"] = informer_id_;
+    j["informer_id_int"] = informer_id_int_;
+    j["cookie"] = cookie_id_;
+    j["test"] = test_mode_;
+    j["capacity"] = capacity_;
+    j["country"] = country_;
+    j["region"] = region_;
+    j["w"] = w_;
+    j["h"] = h_;
+    j["M"] = M_;
+    j["D"] = D_;
+    j["H"] = H_;
+    j["device"] = device_;
+    j["search"] = search_;
+    j["context"] = context_;
 
-    str_json << "{" <<
-        "\"ip\": \"" << Json::Utils::Escape(ip_) << "\"," <<
-        "\"cookie\": \"" << Json::Utils::Escape(cookie_id_) << "\"," <<
-        "\"test\": " << Json::Utils::Escape(test_mode_) << "," <<
-        "\"informer_id\": \"" << Json::Utils::Escape(informer_id_) << "\"," <<
-        "\"informer_id_int\": " << informer_id_int_ << "," <<
-        "\"country\": \"" << Json::Utils::Escape(country_) << "\"," <<
-        "\"region\": \"" << Json::Utils::Escape(region_) << "\"," <<
-        "\"w\": \"" << Json::Utils::Escape(w_) << "\"," <<
-        "\"h\": \"" << Json::Utils::Escape(h_) << "\"," <<
-        "\"M\": \"" << Json::Utils::Escape(M_) << "\"," <<
-        "\"D\": \"" << Json::Utils::Escape(D_) << "\"," <<
-        "\"H\": \"" << Json::Utils::Escape(H_) << "\"," <<
-        "\"device\": \"" << Json::Utils::Escape(device_) << "\"," <<
-        "\"search\": \"" << Json::Utils::Escape(search_) << "\"," <<
-        "\"context\": \"" << Json::Utils::Escape(context_) << "\"" <<
-         "}";
-
-    return str_json.str();
+    return j.dump();
 }

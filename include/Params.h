@@ -30,11 +30,13 @@ public:
     std::string search_;
     std::string get_;
     std::string post_;
+    unsigned int capacity_;
     Params();
     Params &ip(const std::string &ip, const std::string &qip);
     Params &cookie_id(const std::string &cookie_id);
     Params &informer_id(const std::string &informer_id);
     Params &informer_id_int(long long &informer_id_int);
+    Params &capacity(unsigned int &capacity);
     Params &country(const std::string &country);
     Params &region(const std::string &region);
     Params &test_mode(bool test_mode);

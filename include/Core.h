@@ -21,6 +21,7 @@ public:
      * пользователю.
      */
     std::string Process(Params *params);
+    std::string UserCode(Params *params);
     void ProcessClean();
 private:
     boost::posix_time::ptime

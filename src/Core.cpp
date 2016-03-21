@@ -50,6 +50,7 @@ std::string Core::Process(Params *prms)
         return Config::Instance()->template_error_;
     }
     prms->informer_id_int(informer->id);
+    prms->capacity(informer->capacity);
     resultHtml();
 
     endCoreTime = boost::posix_time::microsec_clock::local_time();
@@ -74,6 +75,37 @@ void Core::resultHtml()
     {
         retHtml = retHtml + "<!--test-->";
     }
+}
+//-------------------------------------------------------------------------------------------------------------------
+std::string Core::UserCode(Params *prms)
+{
+    startCoreTime = boost::posix_time::microsec_clock::local_time();
+
+    params = prms;
+
+    if(!getInformer(params->informer_id_))
+    {
+        std::clog<<"there is no informer id: "<<prms->getInformerId()<<std::endl;
+        std::clog<<" ip:"<<params->getIP();
+        std::clog<<" country:"<<params->getCountry();
+        std::clog<<" region:"<<params->getRegion();
+        std::clog<<" cookie:"<<params->getCookieId();
+        std::clog<<" context:"<<params->getContext();
+        std::clog<<" search:"<<params->getSearch();
+        std::clog<<" informer id:"<<params->informer_id_;
+        std::clog<<" location:"<<params->getLocation();
+        return Config::Instance()->template_error_;
+    }
+    else
+    {
+        std::string html;
+        html +="<html><head><META http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"><style type=\"text/css\">html, body {padding: 0; margin: 0; border: 0;}</style></head><body>";
+        html += informer->user_code;
+        html +="</body></html>";
+        clear();
+        return html;
+    }
+
 }
 //-------------------------------------------------------------------------------------------------------------------
 void Core::log()
