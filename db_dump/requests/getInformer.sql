@@ -1,6 +1,7 @@
 SELECT 	inf.id,
     inf.title,
 	inf.capacity,
+	inf.auto_reload,
 	inf.bannersCss,
 	inf.teasersCss,
     inf.headerHtml,

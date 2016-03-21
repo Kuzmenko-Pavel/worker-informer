@@ -12,6 +12,7 @@ public:
        long long id;                            //Индентификатор РБ
         std::string title;
         unsigned int capacity;                      //Количество мест под тизер
+        unsigned int auto_reload;               
         std::string bannersCss;                 //Стиль CSS РБ для отображения банеров
         std::string teasersCss;                 //Стиль CSS РБ для отображения тизеров
         std::string headerHtml;
@@ -35,6 +36,7 @@ public:
     Informer(long id,
             const std::string &title,
             unsigned int capacity,
+            unsigned int auto_reload,
             const std::string &bannersCss,
             const std::string &teasersCss,
             const std::string &headerHtml,

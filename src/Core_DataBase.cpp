@@ -47,22 +47,23 @@ bool Core_DataBase::getInformer(const std::string informer_id)
             informer =  new Informer(pStmt->GetColumnInt64(0),
                                      pStmt->GetColumnString(1),
                                      pStmt->GetColumnInt(2),
-                                     pStmt->GetColumnString(3),
+                                     pStmt->GetColumnInt(3),
                                      pStmt->GetColumnString(4),
                                      pStmt->GetColumnString(5),
                                      pStmt->GetColumnString(6),
-                                     pStmt->GetColumnDouble(7),
+                                     pStmt->GetColumnString(7),
                                      pStmt->GetColumnDouble(8),
                                      pStmt->GetColumnDouble(9),
                                      pStmt->GetColumnDouble(10),
+                                     pStmt->GetColumnDouble(11),
                                      cfg->range_category_,
-                                     pStmt->GetColumnInt(11),
-                                     pStmt->GetColumnBool(12),
-                                     pStmt->GetColumnString(13),
+                                     pStmt->GetColumnInt(12),
+                                     pStmt->GetColumnBool(13),
                                      pStmt->GetColumnString(14),
-                                     pStmt->GetColumnBool(15),
+                                     pStmt->GetColumnString(15),
                                      pStmt->GetColumnBool(16),
-                                     pStmt->GetColumnBool(17)
+                                     pStmt->GetColumnBool(17),
+                                     pStmt->GetColumnBool(18)
                                     );
             ret = true;
             break;

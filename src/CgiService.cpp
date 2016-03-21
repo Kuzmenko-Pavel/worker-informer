@@ -208,7 +208,7 @@ void CgiService::ProcessRequest(FCGX_Request *req, Core *core)
         return;
     }
     char *tmp_str = nullptr;
-    std::string query, ip, script_name, cookie_value;
+    std::string query, ip, script_name, cookie_value, postq;
     boost::u32regex replaceSymbol;
 
 
@@ -222,12 +222,11 @@ void CgiService::ProcessRequest(FCGX_Request *req, Core *core)
         query = std::string(tmp_str);
     }
 
-    char * content_length_str = FCGX_GetParam("CONTENT_LENGTH", req->envp);
+    tmp_str = nullptr;
     unsigned long content_length = STDIN_MAX;
-    std::string postq;
-    if (content_length_str) {
-        content_length = strtol(content_length_str, &content_length_str, 10);
-        if (*content_length_str) {
+    if ((tmp_str = FCGX_GetParam("CONTENT_LENGTH", req->envp))) {
+        content_length = strtol(tmp_str, &tmp_str, 10);
+        if (*tmp_str) {
             Log::warn("Can't Parse 'CONTENT_LENGTH'");
         }
         if (content_length > STDIN_MAX) {
@@ -236,10 +235,14 @@ void CgiService::ProcessRequest(FCGX_Request *req, Core *core)
         if (content_length > 0)
         {
             char * content = new char[content_length];
-            memset(content, 0, content_length);
+            memset(content, ' ', content_length);
             FCGX_GetStr(content, content_length, req->in);
+            postq.clear();
+            postq.resize (content_length,' ');
             postq = std::string(content);
+            postq.resize (content_length);
             delete [] content;
+            content_length = 0;
         }
     }
     tmp_str = nullptr;
@@ -316,19 +319,26 @@ void CgiService::ProcessRequest(FCGX_Request *req, Core *core)
                      .region(url->param("region"))
                      .test_mode(url->param("test") == "false")
                      .script_name(script_name.c_str())
-                     .location(url->param("location"))
-                     .w(url->param("w"))
-                     .h(url->param("h"))
-                     .D(url->param("d"))
-                     .M(url->param("m"))
-                     .H(url->param("hr"))
-                     .device(url->param("device"))
+                     .location(post->param("location"))
+                     .w(post->param("w"))
+                     .h(post->param("h"))
+                     .D(post->param("d"))
+                     .M(post->param("m"))
+                     .H(post->param("hr"))
+                     .device(post->param("device"))
                      .search(post->param("search"))
                      .context(post->param("context"));
 
         std::string result;
 
-        result = core->Process(&prm);
+        if (url->param("show") == "usercode")
+        {
+            result = core->UserCode(&prm);
+        }
+        else
+        {
+            result = core->Process(&prm);
+        }
 
 
         ClearSilver::Cookie c = ClearSilver::Cookie(cfg->cookie_name_,

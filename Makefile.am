@@ -11,7 +11,6 @@ SRC_ALL=src/base64.cpp \
 		src/DB.cpp \
 		src/CgiService.cpp \
 		src/EBranch.cpp \
-		src/json.cpp \
 		src/UrlParser.cpp \
 		src/Config.cpp \
 		src/KompexSQLiteDatabase.cpp \
