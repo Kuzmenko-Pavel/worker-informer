@@ -318,16 +318,12 @@ void CgiService::ProcessRequest(FCGX_Request *req, Core *core)
                      .country(url->param("country"))
                      .region(url->param("region"))
                      .test_mode(url->param("test") == "false")
-                     .script_name(script_name.c_str())
-                     .location(post->param("location"))
                      .w(post->param("w"))
                      .h(post->param("h"))
                      .D(post->param("d"))
                      .M(post->param("m"))
                      .H(post->param("hr"))
-                     .device(post->param("device"))
-                     .search(post->param("search"))
-                     .context(post->param("context"));
+                     .device(post->param("device"));
 
         std::string result;
 

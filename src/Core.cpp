@@ -43,10 +43,7 @@ std::string Core::Process(Params *prms)
         std::clog<<" country:"<<params->getCountry();
         std::clog<<" region:"<<params->getRegion();
         std::clog<<" cookie:"<<params->getCookieId();
-        std::clog<<" context:"<<params->getContext();
-        std::clog<<" search:"<<params->getSearch();
         std::clog<<" informer id:"<<params->informer_id_;
-        std::clog<<" location:"<<params->getLocation();
         return Config::Instance()->template_error_;
     }
     prms->informer_id_int(informer->id);
@@ -90,10 +87,7 @@ std::string Core::UserCode(Params *prms)
         std::clog<<" country:"<<params->getCountry();
         std::clog<<" region:"<<params->getRegion();
         std::clog<<" cookie:"<<params->getCookieId();
-        std::clog<<" context:"<<params->getContext();
-        std::clog<<" search:"<<params->getSearch();
         std::clog<<" informer id:"<<params->informer_id_;
-        std::clog<<" location:"<<params->getLocation();
         return Config::Instance()->template_error_;
     }
     else
@@ -133,9 +127,6 @@ void Core::log()
 
     if(cfg->logInformerId)
         std::clog<<" informer id:"<<informer->id;
-
-    if(cfg->logLocation)
-        std::clog<<" location:"<<params->getLocation();
 }
 //-------------------------------------------------------------------------------------------------------------------
 void Core::ProcessClean()

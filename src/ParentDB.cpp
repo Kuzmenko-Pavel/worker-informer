@@ -157,11 +157,13 @@ bool ParentDB::InformerUpdate(mongo::Query query)
         {
             bzero(buf,sizeof(buf));
             sqlite3_snprintf(sizeof(buf),buf,
-                             "UPDATE Informer SET title='%q',bannersCss='%q',teasersCss='%q',headerHtml='%q',footerHtml='%q',\
+                             "UPDATE Informer SET title='%q',account='%q',domain='%q',bannersCss='%q',teasersCss='%q',headerHtml='%q',footerHtml='%q',\
                               nonrelevant='%q',valid=1,height=%d,width=%d,height_banner=%d,width_banner=%d,capacity=%d, auto_reload=%d\
                               range_short_term=%f, range_long_term=%f, range_context=%f, range_search=%f, retargeting_capacity=%u, user_code='%q', html_notification=%d, place_branch=%d, retargeting_branch=%d\
                               WHERE id=%lld;",
                              x.getStringField("title"),
+                             x.getStringField("user"),
+                             x.getStringField("domain"),
                              x.getStringField("css_banner"),
                              css.c_str(),
                              headerHtml.c_str(),
@@ -191,15 +193,17 @@ bool ParentDB::InformerUpdate(mongo::Query query)
         {
             bzero(buf,sizeof(buf));
             sqlite3_snprintf(sizeof(buf),buf,
-                             "INSERT OR IGNORE INTO Informer(id,guid,title,bannersCss,teasersCss,headerHtml,footerHtml,\
+                             "INSERT OR IGNORE INTO Informer(id,guid,title, account, domain, bannersCss,teasersCss,headerHtml,footerHtml,\
                               nonrelevant,valid,height,width,height_banner,width_banner,capacity, auto_reload,\
                               range_short_term, range_long_term, range_context, range_search, retargeting_capacity, user_code, html_notification, place_branch, retargeting_branch) VALUES(\
-                              %lld,'%q','%q','%q','%q','%q','%q',\
+                              %lld,'%q','%q','%q','%q','%q','%q','%q','%q',\
                               '%q',1,%d,%d,%d,%d,%d, %d,\
                               %f,%f,%f,%f,%u,'%q',%d,%d,%d);",
                              long_id,
                              id.c_str(),
                              x.getStringField("title"),
+                             x.getStringField("user"),
+                             x.getStringField("domain"),
                              x.getStringField("css_banner"),
                              css.c_str(),
                              headerHtml.c_str(),

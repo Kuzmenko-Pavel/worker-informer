@@ -110,16 +110,6 @@ Params &Params::test_mode(bool test_mode)
     test_mode_ = test_mode;
     return *this;
 }
-Params &Params::script_name(const char *script_name)
-{
-    script_name_ = script_name? script_name : "";
-    return *this;
-}
-Params &Params::location(const std::string &location)
-{
-    location_ = location;
-    return *this;
-}
 
 Params &Params::w(const std::string &w)
 {
@@ -146,16 +136,6 @@ Params &Params::M(const std::string &M)
 Params &Params::H(const std::string &H)
 {
     H_ = H;
-    return *this;
-}
-Params &Params::context(const std::string &context)
-{
-    context_ = context;
-    return *this;
-}
-Params &Params::search(const std::string &search)
-{
-    search_ = search;
     return *this;
 }
 Params &Params::get(const std::string &get)
@@ -209,15 +189,6 @@ bool Params::isTestMode() const
 {
     return test_mode_;
 }
-std::string Params::getScriptName() const
-{
-    return script_name_;
-}
-
-std::string Params::getLocation() const
-{
-    return location_;
-}
 
 std::string Params::getW() const
 {
@@ -229,15 +200,6 @@ std::string Params::getH() const
     return h_;
 }
 
-std::string Params::getContext() const
-{
-    return context_;
-}
-
-std::string Params::getSearch() const
-{
-    return search_;
-}
 
 std::string Params::getDevice() const
 {
@@ -261,8 +223,6 @@ std::string Params::toJson() const
     j["D"] = D_;
     j["H"] = H_;
     j["device"] = device_;
-    j["search"] = search_;
-    j["context"] = context_;
 
     return j.dump();
 }

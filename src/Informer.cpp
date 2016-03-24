@@ -7,7 +7,7 @@ Informer::Informer(long id) :
 {
 }
 
-Informer::Informer(long id, const std::string &title, unsigned int capacity, unsigned int auto_reload, const std::string &bannersCss,
+Informer::Informer(long id, const std::string &title, const std::string &account, const std::string &domain, unsigned int capacity, unsigned int auto_reload, const std::string &bannersCss,
                    const std::string &teasersCss,
                    const std::string &headerHtml,
                    const std::string &footerHtml,
@@ -16,6 +16,8 @@ Informer::Informer(long id, const std::string &title, unsigned int capacity, uns
                    int retargeting_capacity, bool blocked, const std::string &nonrelevant, const std::string &user_code, bool html_notification, bool plase_branch, bool retargeting_branch):
     id(id),
     title(title),
+    account(account),
+    domain(domain),
     capacity(capacity),
     auto_reload(auto_reload),
     bannersCss(bannersCss),
@@ -56,10 +58,12 @@ std::string Informer::toJson() const
     nlohmann::json j;
     j["informer_id_int"] = id;
     j["title"] = title;
+    j["account"] = account;
+    j["domain"] = domain;
     j["capacity"] = capacity;
     j["auto_reload"] = auto_reload;
-    //j["bannersCss"] = bannersCss;
     j["teasersCss"] = teasersCss;
+    j["bannersCss"] = bannersCss;
     j["headerHtml"] = headerHtml;
     j["footerHtml"] = footerHtml;
     j["retargeting_capacity"] = retargeting_capacity;
