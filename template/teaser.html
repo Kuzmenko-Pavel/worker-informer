@@ -228,20 +228,20 @@
         if (typeof(ga) == 'function')
         {
             ga('set', 'referrer', informer.title.toLowerCase());
-            ga('send', 'pageview', {});
+            ga('send', 'pageview', {'page': informer.domain.toLowerCase(),'title': informer.account.toLowerCase()});
             $.each(items, function(i, v) {
                 ga('adload.set', 'referrer', informer.title.toLowerCase());
                 ga('adload.set', 'campaignName', v.campaign_title.toLowerCase());
                 ga('adload.set', 'campaignContent', v.title.toLowerCase());
-                ga('adload.send', 'pageview', {});
+                ga('adload.send', 'pageview', {'page': informer.domain.toLowerCase(),'title': informer.account.toLowerCase()});
                 $("div[data-id='"+ v.id +"']>span").each(function() {
                     $(this).click(function(){
                       ga('adload.set', 'referrer', informer.title.toLowerCase());
                       ga('set', 'referrer', informer.title.toLowerCase());
                       ga('adload.set', 'campaignName', v.campaign_title.toLowerCase());
                       ga('adload.set', 'campaignContent', v.title.toLowerCase());
-                      ga('send', 'event', 'Link', 'Click',{});
-                      ga('adload.send', 'event','Link', 'Click',{});
+                      ga('send', 'event', 'Link', 'Click',{'page': informer.domain.toLowerCase(),'title': informer.account.toLowerCase()});
+                      ga('adload.send', 'event','Link', 'Click',{'page': informer.domain.toLowerCase(),'title': informer.account.toLowerCase()});
                     });
                 });
             });

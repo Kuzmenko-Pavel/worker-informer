@@ -1,5 +1,7 @@
 SELECT 	inf.id,
     inf.title,
+    inf.account,
+    inf.domain,
 	inf.capacity,
 	inf.auto_reload,
 	inf.bannersCss,

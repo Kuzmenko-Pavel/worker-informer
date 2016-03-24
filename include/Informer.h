@@ -11,6 +11,8 @@ class Informer
 public:
        long long id;                            //Индентификатор РБ
         std::string title;
+        std::string account;
+        std::string domain;
         unsigned int capacity;                      //Количество мест под тизер
         unsigned int auto_reload;               
         std::string bannersCss;                 //Стиль CSS РБ для отображения банеров
@@ -35,6 +37,8 @@ public:
     Informer(long id);
     Informer(long id,
             const std::string &title,
+            const std::string &account,
+            const std::string &domain,
             unsigned int capacity,
             unsigned int auto_reload,
             const std::string &bannersCss,

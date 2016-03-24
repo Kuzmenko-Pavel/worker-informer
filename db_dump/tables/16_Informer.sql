@@ -3,6 +3,8 @@ CREATE TABLE IF NOT EXISTS Informer
 id INT8 PRIMARY KEY,
 guid VARCHAR(64),
 title VARCHAR(100),
+account VARCHAR(2048),
+domain VARCHAR(2048),
 teasersCss TEXT,
 bannersCss TEXT,
 headerHtml TEXT default '',
