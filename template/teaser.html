@@ -79,9 +79,7 @@
             'gender': uh.gender_user.get(),
             'exclude': uh.exclude_get(),
             'retargeting': uh.retargeting.get(),
-            'search_short': uh.searchengines.get(),
             'cost_accounts': uh.cost_accounts.get(),
-            'context_short': uh.context.get(),
             'gender_accounts': uh.gender_accounts.get(),
             'retargeting_view': uh.retargeting_view.getString(),
             'retargeting_exclude': uh.retargeting_exclude_get(),
@@ -89,26 +87,30 @@
         });
         var informer_data = $.extend({},informer);
         informer_data['teasersCss'] = '';
+        informer_data['bannersCss'] = '';
         return {"params":params, "informer": informer_data };
     }
 
     function getCampaignData() {
         var requiredData = [{
                 param: 'place',
+                isDisable: !(informer.social_branch || informer.place_branch),
                 url: 'http://rg.srv-4.yottos.com:88/place.json'
             },
             {
                 param: 'retargetingAccount',
+                isDisable: !informer.retargeting_branch,
                 url: 'http://rg.srv-4.yottos.com:88/retargeting-account.json'
             },
             {
                 param: 'retargetingOffer',
+                isDisable: !informer.retargeting_branch,
                 url: 'http://rg.srv-4.yottos.com:88/retargeting.json'
             }
         ];
 
         return $.map(requiredData, function(dataItem) {
-            if (!params[dataItem.param] || (params[dataItem.param] || '').length === 0) {
+            if ((!params[dataItem.param] || (params[dataItem.param] || '').length === 0) || dataItem.isDisable) {
                 return {};
             }
 
@@ -130,6 +132,10 @@
         }
         return $.when.apply($, getCampaignData()).then(function(place, retargeringAccount, retargering) {
             offers.items = $.merge(offers.items, offerUnion(place, retargeringAccount, retargering));
+            if (offers.items.length < 1 && !informer.social_branch)
+            {
+                location.href = 'http://rg.srv-4.yottos.com:88/adshow.fcgi?scr=' + informer.informer_id + '&show=usercode' 
+            }
             render(capacity);
         });
     };
