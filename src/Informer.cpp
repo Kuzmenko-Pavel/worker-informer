@@ -7,14 +7,15 @@ Informer::Informer(long id) :
 {
 }
 
-Informer::Informer(long id, const std::string &title, const std::string &account, const std::string &domain, unsigned int capacity, unsigned int auto_reload, const std::string &bannersCss,
+Informer::Informer(long id, const std::string &guid, const std::string &title, const std::string &account, const std::string &domain, unsigned int capacity, unsigned int auto_reload, const std::string &bannersCss,
                    const std::string &teasersCss,
                    const std::string &headerHtml,
                    const std::string &footerHtml,
                    double range_short_term, double range_long_term,
                    double range_context, double range_search, double range_category,
-                   int retargeting_capacity, bool blocked, const std::string &nonrelevant, const std::string &user_code, bool html_notification, bool plase_branch, bool retargeting_branch):
+                   int retargeting_capacity, bool blocked, bool social_branch, const std::string &user_code, bool html_notification, bool plase_branch, bool retargeting_branch):
     id(id),
+    guid(guid),
     title(title),
     account(account),
     domain(domain),
@@ -31,7 +32,7 @@ Informer::Informer(long id, const std::string &title, const std::string &account
     range_search(range_search),
     range_category(range_category),
     blocked(blocked),
-    nonrelevant(nonrelevant),
+    social_branch(social_branch),
     user_code(user_code),
     html_notification(html_notification),
     plase_branch(plase_branch),
@@ -57,6 +58,7 @@ std::string Informer::toJson() const
 {
     nlohmann::json j;
     j["informer_id_int"] = id;
+    j["informer_id"] = guid;
     j["title"] = title;
     j["account"] = account;
     j["domain"] = domain;
@@ -67,10 +69,9 @@ std::string Informer::toJson() const
     j["headerHtml"] = headerHtml;
     j["footerHtml"] = footerHtml;
     j["retargeting_capacity"] = retargeting_capacity;
-    j["nonrelevant"] = nonrelevant;
-    j["user_code"] = user_code;
+    j["social_branch"] = social_branch;
     j["html_notification"] = html_notification;
-    j["plase_branch"] = plase_branch;
+    j["place_branch"] = plase_branch;
     j["retargeting_branch"] = retargeting_branch;
 
     return j.dump();

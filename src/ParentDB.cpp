@@ -120,7 +120,7 @@ bool ParentDB::InformerUpdate(mongo::Query query)
         int capacity = 0;
         std::string headerHtml;
         std::string footerHtml;
-        std::string nonrelevant;
+        int social_branch = 1;
         std::string user_code;
         mongo::BSONElement capacity_element =
             x.getFieldDotted("admaker.Main.itemsNumber");
@@ -144,9 +144,12 @@ bool ParentDB::InformerUpdate(mongo::Query query)
         default:
             capacity = 0;
         }
+        if (nonrelevant_element.str() == "usercode")
+        {
+            social_branch = 0;
+        }
         headerHtml = header_html.str();
         footerHtml = footer_html.str();
-        nonrelevant = nonrelevant_element.str();
         user_code = user_code_element.str();
 
         std::string css;
@@ -158,7 +161,7 @@ bool ParentDB::InformerUpdate(mongo::Query query)
             bzero(buf,sizeof(buf));
             sqlite3_snprintf(sizeof(buf),buf,
                              "UPDATE Informer SET title='%q',account='%q',domain='%q',bannersCss='%q',teasersCss='%q',headerHtml='%q',footerHtml='%q',\
-                              nonrelevant='%q',valid=1,height=%d,width=%d,height_banner=%d,width_banner=%d,capacity=%d, auto_reload=%d\
+                              social_branch=%d, valid=1,height=%d,width=%d,height_banner=%d,width_banner=%d,capacity=%d, auto_reload=%d\
                               range_short_term=%f, range_long_term=%f, range_context=%f, range_search=%f, retargeting_capacity=%u, user_code='%q', html_notification=%d, place_branch=%d, retargeting_branch=%d\
                               WHERE id=%lld;",
                              x.getStringField("title"),
@@ -168,7 +171,7 @@ bool ParentDB::InformerUpdate(mongo::Query query)
                              css.c_str(),
                              headerHtml.c_str(),
                              footerHtml.c_str(),
-                             nonrelevant.c_str(),
+                             social_branch,
                              x.getIntField("height"),
                              x.getIntField("width"),
                              x.getIntField("height_banner"),
@@ -194,10 +197,10 @@ bool ParentDB::InformerUpdate(mongo::Query query)
             bzero(buf,sizeof(buf));
             sqlite3_snprintf(sizeof(buf),buf,
                              "INSERT OR IGNORE INTO Informer(id,guid,title, account, domain, bannersCss,teasersCss,headerHtml,footerHtml,\
-                              nonrelevant,valid,height,width,height_banner,width_banner,capacity, auto_reload,\
+                              social_branch,valid,height,width,height_banner,width_banner,capacity, auto_reload,\
                               range_short_term, range_long_term, range_context, range_search, retargeting_capacity, user_code, html_notification, place_branch, retargeting_branch) VALUES(\
                               %lld,'%q','%q','%q','%q','%q','%q','%q','%q',\
-                              '%q',1,%d,%d,%d,%d,%d, %d,\
+                              %d,1,%d,%d,%d,%d,%d, %d,\
                               %f,%f,%f,%f,%u,'%q',%d,%d,%d);",
                              long_id,
                              id.c_str(),
@@ -208,7 +211,7 @@ bool ParentDB::InformerUpdate(mongo::Query query)
                              css.c_str(),
                              headerHtml.c_str(),
                              footerHtml.c_str(),
-                             nonrelevant.c_str(),
+                             social_branch,
                              x.getIntField("height"),
                              x.getIntField("width"),
                              x.getIntField("height_banner"),

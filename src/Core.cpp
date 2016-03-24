@@ -96,7 +96,6 @@ std::string Core::UserCode(Params *prms)
         html +="<html><head><META http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"><style type=\"text/css\">html, body {padding: 0; margin: 0; border: 0;}</style></head><body>";
         html += informer->user_code;
         html +="</body></html>";
-        clear();
         return html;
     }
 

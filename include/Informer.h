@@ -10,6 +10,7 @@ class Informer
 {
 public:
        long long id;                            //Индентификатор РБ
+        std::string guid;
         std::string title;
         std::string account;
         std::string domain;
@@ -28,6 +29,7 @@ public:
         bool valid;                             //Валидность блока
         bool html_notification;                 
         bool plase_branch;                      
+        bool social_branch;                      
         bool retargeting_branch;                
         int height;                             //Высота блока
         int width;                              //Ширина блока
@@ -36,6 +38,7 @@ public:
 
     Informer(long id);
     Informer(long id,
+            const std::string &guid,
             const std::string &title,
             const std::string &account,
             const std::string &domain,
@@ -52,7 +55,7 @@ public:
             double range_search,
             int range_category,
             bool valid,
-            const std::string &nonrelevant,
+            bool social_branch,
             const std::string &user_code,
             bool html_notification,
             bool plase_branch,
