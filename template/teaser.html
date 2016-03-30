@@ -63,6 +63,7 @@
     $.ajaxSetup({
         dataType: 'json',
         type:"POST",
+        timeout: 500,
         contentType: 'application/json; charset=utf-8',
         cache: false,
         beforeSend: function(xhr, settings) {
@@ -254,7 +255,7 @@
         bindAnalytic(items);
         if (informer.auto_reload)
         {
-            setTimeout(function() {offerChange($('#adsContainer>div>span').first())}, 5000);
+            setTimeout(function() {offerChange($('#adsContainer>div>span').first())}, informer.auto_reload * 1000);
         }
     };
     var bindAnalytic = function(items){
