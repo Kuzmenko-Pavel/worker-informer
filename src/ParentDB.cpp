@@ -161,7 +161,7 @@ bool ParentDB::InformerUpdate(mongo::Query query)
             bzero(buf,sizeof(buf));
             sqlite3_snprintf(sizeof(buf),buf,
                              "UPDATE Informer SET title='%q',account='%q',domain='%q',bannersCss='%q',teasersCss='%q',headerHtml='%q',footerHtml='%q',\
-                              social_branch=%d, valid=1,height=%d,width=%d,height_banner=%d,width_banner=%d,capacity=%d, auto_reload=%d\
+                              social_branch=%d, valid=1,height=%d,width=%d,height_banner=%d,width_banner=%d,capacity=%d, auto_reload=%d,\
                               range_short_term=%f, range_long_term=%f, range_context=%f, range_search=%f, retargeting_capacity=%u, user_code='%q', html_notification=%d, place_branch=%d, retargeting_branch=%d\
                               WHERE id=%lld;",
                              x.getStringField("title"),
