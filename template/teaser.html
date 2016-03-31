@@ -201,7 +201,7 @@
         {
             if (!items)
             {
-                items = false;
+                items = [];
             }
             $.ajax({
                 beforeSend: function(xhr, settings) {
@@ -284,6 +284,7 @@
 
     var offerChange = function(element)
     {
+        params.request="rotation";
         getCampaignDataProcces(1);
         var pel = $(element).parent();
         var ppel = pel.parent();

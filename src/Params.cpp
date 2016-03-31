@@ -6,7 +6,7 @@
 #include <boost/regex.hpp>
 #include <boost/regex/icu.hpp>
 #include <boost/date_time.hpp>
-
+#include <iostream>
 #include <string>
 
 #include "Params.h"
@@ -205,9 +205,25 @@ std::string Params::getDevice() const
 {
     return device_;
 }
-
+std::string encryptDecrypt(std::string toEncrypt, std::string ip)
+{
+    unsigned int content_length = 0;
+    content_length = ip.length();
+    char * key = new char[content_length];
+    memset(key, '0', content_length);
+    strcpy(key, ip.c_str());
+    
+    std::string output = toEncrypt;
+    for (int i = 0; i < toEncrypt.size(); i++)
+    {
+        output[i] = toEncrypt[i] ^ key[i % (sizeof(key) / sizeof(char))];
+    }
+    delete [] key;
+    return output;
+}
 std::string Params::toJson() const
 {
+    std::string token = encryptDecrypt("valid", ip_);
     nlohmann::json j;
     j["ip"] = ip_;
     j["informer_id"] = informer_id_;
@@ -223,6 +239,8 @@ std::string Params::toJson() const
     j["D"] = D_;
     j["H"] = H_;
     j["device"] = device_;
+    j["request"] = "initial";
+    j["token"] = token;
 
     return j.dump();
 }
