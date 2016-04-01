@@ -253,9 +253,9 @@ bool Config::Load()
                 }
 
                 template_ = getFileContents(cfgFilePath + mels->GetText());
-    #ifndef DEBUG
+    //#ifndef DEBUG
                 minifyhtml(template_);
-    #endif
+    //#endif
             }
             else
             {
