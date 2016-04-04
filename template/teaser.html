@@ -74,7 +74,7 @@
     });
 
     function getCampaign() {
-        return $.post('http://rg.srv-4.yottos.com:88/campaign.json');
+        return $.post('/campaign.json');
     }
 
     function generateRequestData() {
@@ -101,17 +101,17 @@
         var requiredData = [{
                 param: 'place',
                 isDisable: !(informer.social_branch || informer.place_branch),
-                url: 'http://rg.srv-4.yottos.com:88/place.json'
+                url: '/place.json'
             },
             {
                 param: 'retargetingAccount',
                 isDisable: !informer.retargeting_branch,
-                url: 'http://rg.srv-4.yottos.com:88/retargeting-account.json'
+                url: '/retargeting-account.json'
             },
             {
                 param: 'retargetingOffer',
                 isDisable: !informer.retargeting_branch,
-                url: 'http://rg.srv-4.yottos.com:88/retargeting.json'
+                url: '/retargeting.json'
             }
         ];
 
@@ -140,7 +140,7 @@
             offers.items = $.merge(offers.items, offerUnion(place, retargeringAccount, retargering));
             if (offers.items.length < 1 && !informer.social_branch)
             {
-                location.href = 'http://rg.srv-4.yottos.com:88/adshow.fcgi?scr=' + informer.informer_id + '&show=usercode' 
+                location.href = '/block?scr=' + informer.informer_id + '&show=usercode' 
             }
             render(capacity);
         });
@@ -311,7 +311,7 @@
         var e = new Date().getTime();
         var t = e - st;
         var url = "id="+ i.guid + "\n" + "inf=" + informer.informer_id + "\n" + "token=" + i.token + "\n" + "url=" + i.url + "\n" + "rand=" +  params.rand() + "\n" + "camp=" +  i.campaign_guid + "\n" + "t=" + t + "\n" ;
-        var r = ['/redirect?',b.encode(url)];
+        var r = ['/click?',b.encode(url)];
         return r.join('');
     };
     var bindRedirect = function(items){
