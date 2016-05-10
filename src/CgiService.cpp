@@ -75,9 +75,6 @@ void CgiService::run()
     for(;;)
     {
         bcore->ProcessMQ();
-        #ifdef DEBUG
-        stat->cpuUsage();
-        #endif
         sleep(1);
     }
 }
