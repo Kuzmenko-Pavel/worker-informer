@@ -7,7 +7,14 @@ Informer::Informer(long id) :
 {
 }
 
-Informer::Informer(long id, const std::string &guid, const std::string &title, const std::string &account, const std::string &domain, unsigned int capacity, unsigned int auto_reload, const std::string &bannersCss,
+Informer::Informer(long id, const std::string &guid, const std::string &title, const std::string &account, const std::string &domain, unsigned int capacity,
+                   unsigned int auto_reload,
+                   unsigned int blinking,          
+                   unsigned int shake,               
+                   bool blinking_reload,                 
+                   bool shake_reload,                
+                   bool shake_mouse,                 
+                   const std::string &bannersCss,
                    const std::string &teasersCss,
                    const std::string &headerHtml,
                    const std::string &footerHtml,
@@ -21,6 +28,11 @@ Informer::Informer(long id, const std::string &guid, const std::string &title, c
     domain(domain),
     capacity(capacity),
     auto_reload(auto_reload),
+    blinking(blinking),
+    shake(shake),
+    blinking_reload(blinking_reload),
+    shake_reload(shake_reload),
+    shake_mouse(shake_mouse),
     bannersCss(bannersCss),
     teasersCss(teasersCss),
     headerHtml(headerHtml),
@@ -64,6 +76,11 @@ std::string Informer::toJson() const
     j["domain"] = domain;
     j["capacity"] = capacity;
     j["auto_reload"] = auto_reload;
+    j["blinking"] = blinking;
+    j["shake"] = shake;
+    j["blinking_reload"] = blinking_reload;
+    j["shake_reload"] = shake_reload;
+    j["shake_mouse"] = shake_mouse;
     j["teasersCss"] = teasersCss;
     j["bannersCss"] = bannersCss;
     j["headerHtml"] = headerHtml;

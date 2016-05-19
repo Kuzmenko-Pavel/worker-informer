@@ -16,6 +16,11 @@ public:
         std::string domain;
         unsigned int capacity;                      //Количество мест под тизер
         unsigned int auto_reload;               
+        unsigned int blinking;               
+        unsigned int shake ;               
+        bool blinking_reload;                 
+        bool shake_reload;                 
+        bool shake_mouse;                 
         std::string bannersCss;                 //Стиль CSS РБ для отображения банеров
         std::string teasersCss;                 //Стиль CSS РБ для отображения тизеров
         std::string headerHtml;
@@ -44,6 +49,11 @@ public:
             const std::string &domain,
             unsigned int capacity,
             unsigned int auto_reload,
+            unsigned int blinking,          
+            unsigned int shake,               
+            bool blinking_reload,                 
+            bool shake_reload,                
+            bool shake_mouse,                 
             const std::string &bannersCss,
             const std::string &teasersCss,
             const std::string &headerHtml,
