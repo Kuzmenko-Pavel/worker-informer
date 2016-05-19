@@ -162,6 +162,7 @@ bool ParentDB::InformerUpdate(mongo::Query query)
             sqlite3_snprintf(sizeof(buf),buf,
                              "UPDATE Informer SET title='%q',account='%q',domain='%q',bannersCss='%q',teasersCss='%q',headerHtml='%q',footerHtml='%q',\
                               social_branch=%d, valid=1,height=%d,width=%d,height_banner=%d,width_banner=%d,capacity=%d, auto_reload=%d,\
+                              blinking=%d, shake=%d, blinking_reload=%d, shake_reload=%d, shake_mouse=%d,\ 
                               range_short_term=%f, range_long_term=%f, range_context=%f, range_search=%f, retargeting_capacity=%u, user_code='%q', html_notification=%d, place_branch=%d, retargeting_branch=%d\
                               WHERE id=%lld;",
                              x.getStringField("title"),
@@ -178,6 +179,11 @@ bool ParentDB::InformerUpdate(mongo::Query query)
                              x.getIntField("width_banner"),
                              capacity,
                              x.hasField("auto_reload") ? x.getIntField("auto_reload") : 0,
+                             x.hasField("blinking") ? x.getIntField("blinking") : 0,
+                             x.hasField("shake") ? x.getIntField("shake") : 0,
+                             x.getBoolField("blinking_reload") ? 1 : 0,
+                             x.getBoolField("shake_reload") ? 1 : 0,
+                             x.getBoolField("shake_mouse") ? 1 : 0,
                              x.hasField("range_short_term") ? x.getField("range_short_term").numberDouble() : cfg->range_short_term_,
                              x.hasField("range_long_term") ? x.getField("range_long_term").numberDouble() : cfg->range_long_term_,
                              x.hasField("range_context") ? x.getField("range_context").numberDouble() : cfg->range_context_,
@@ -198,9 +204,11 @@ bool ParentDB::InformerUpdate(mongo::Query query)
             sqlite3_snprintf(sizeof(buf),buf,
                              "INSERT OR IGNORE INTO Informer(id,guid,title, account, domain, bannersCss,teasersCss,headerHtml,footerHtml,\
                               social_branch,valid,height,width,height_banner,width_banner,capacity, auto_reload,\
+                              blinking, shake, blinking_reload, shake_reload, shake_mouse,\ 
                               range_short_term, range_long_term, range_context, range_search, retargeting_capacity, user_code, html_notification, place_branch, retargeting_branch) VALUES(\
                               %lld,'%q','%q','%q','%q','%q','%q','%q','%q',\
                               %d,1,%d,%d,%d,%d,%d, %d,\
+                              %d,%d,%d,%d, %d,\
                               %f,%f,%f,%f,%u,'%q',%d,%d,%d);",
                              long_id,
                              id.c_str(),
@@ -218,6 +226,11 @@ bool ParentDB::InformerUpdate(mongo::Query query)
                              x.getIntField("width_banner"),
                              capacity,
                              x.hasField("auto_reload") ? x.getIntField("auto_reload") : 0,
+                             x.hasField("blinking") ? x.getIntField("blinking") : 0,
+                             x.hasField("shake") ? x.getIntField("shake") : 0,
+                             x.getBoolField("blinking_reload") ? 1 : 0,
+                             x.getBoolField("shake_reload") ? 1 : 0,
+                             x.getBoolField("shake_mouse") ? 1 : 0,
                              x.hasField("range_short_term") ? x.getField("range_short_term").numberDouble() : cfg->range_short_term_,
                              x.hasField("range_long_term") ? x.getField("range_long_term").numberDouble() : cfg->range_long_term_,
                              x.hasField("range_context") ? x.getField("range_context").numberDouble() : cfg->range_context_,
