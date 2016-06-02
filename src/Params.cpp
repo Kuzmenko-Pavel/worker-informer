@@ -77,6 +77,11 @@ Params &Params::capacity(unsigned int &capacity)
     capacity_ = capacity;
     return *this;
 }
+Params &Params::rating_division(int &rating_division)
+{
+    rating_division_ = rating_division;
+    return *this;
+}
 Params &Params::country(const std::string &country)
 {
     if(!country.empty())
@@ -231,6 +236,7 @@ std::string Params::toJson() const
     j["cookie"] = cookie_id_;
     j["test"] = test_mode_;
     j["capacity"] = capacity_;
+    j["rating_division"] = rating_division_;
     j["country"] = country_;
     j["region"] = region_;
     j["w"] = w_;

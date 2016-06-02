@@ -48,6 +48,7 @@ std::string Core::Process(Params *prms)
     }
     prms->informer_id_int(informer->id);
     prms->capacity(informer->capacity);
+    prms->rating_division(informer->rating_division);
     resultHtml();
 
     endCoreTime = boost::posix_time::microsec_clock::local_time();
