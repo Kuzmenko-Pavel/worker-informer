@@ -14,13 +14,13 @@ Informer::Informer(long id, const std::string &guid, const std::string &title, c
                    bool blinking_reload,                 
                    bool shake_reload,                
                    bool shake_mouse,                 
-                   const std::string &bannersCss,
                    const std::string &teasersCss,
                    const std::string &headerHtml,
                    const std::string &footerHtml,
                    double range_short_term, double range_long_term,
                    double range_context, double range_search, double range_category,
-                   int retargeting_capacity, bool blocked, bool social_branch, const std::string &user_code, bool html_notification, bool plase_branch, bool retargeting_branch):
+                   int retargeting_capacity, bool blocked, bool social_branch, const std::string &user_code, bool html_notification, bool plase_branch, bool retargeting_branch,
+                   int rating_division):
     id(id),
     guid(guid),
     title(title),
@@ -33,7 +33,6 @@ Informer::Informer(long id, const std::string &guid, const std::string &title, c
     blinking_reload(blinking_reload),
     shake_reload(shake_reload),
     shake_mouse(shake_mouse),
-    bannersCss(bannersCss),
     teasersCss(teasersCss),
     headerHtml(headerHtml),
     footerHtml(footerHtml),
@@ -48,7 +47,8 @@ Informer::Informer(long id, const std::string &guid, const std::string &title, c
     user_code(user_code),
     html_notification(html_notification),
     plase_branch(plase_branch),
-    retargeting_branch(retargeting_branch)
+    retargeting_branch(retargeting_branch),
+    rating_division(rating_division)
 
 {
 }
@@ -82,7 +82,6 @@ std::string Informer::toJson() const
     j["shake_reload"] = shake_reload;
     j["shake_mouse"] = shake_mouse;
     j["teasersCss"] = teasersCss;
-    j["bannersCss"] = bannersCss;
     j["headerHtml"] = headerHtml;
     j["footerHtml"] = footerHtml;
     j["retargeting_capacity"] = retargeting_capacity;

@@ -10,7 +10,6 @@ SELECT 	inf.id,
     inf.blinking_reload,
     inf.shake_reload,
     inf.shake_mouse,
-	inf.bannersCss,
 	inf.teasersCss,
     inf.headerHtml,
     inf.footerHtml,
@@ -24,7 +23,8 @@ SELECT 	inf.id,
     inf.user_code,
     inf.html_notification,
     inf.place_branch,
-    inf.retargeting_branch
+    inf.retargeting_branch,
+    inf.rating_division
 FROM Informer AS inf INDEXED BY idx_Informer_guid
 WHERE inf.guid='%s'
 LIMIT 1;

@@ -59,19 +59,19 @@ bool Core_DataBase::getInformer(const std::string informer_id)
                                      pStmt->GetColumnString(12),
                                      pStmt->GetColumnString(13),
                                      pStmt->GetColumnString(14),
-                                     pStmt->GetColumnString(15),
+                                     pStmt->GetColumnDouble(15),
                                      pStmt->GetColumnDouble(16),
                                      pStmt->GetColumnDouble(17),
                                      pStmt->GetColumnDouble(18),
-                                     pStmt->GetColumnDouble(19),
                                      cfg->range_category_,
-                                     pStmt->GetColumnInt(20),
+                                     pStmt->GetColumnInt(19),
+                                     pStmt->GetColumnBool(20),
                                      pStmt->GetColumnBool(21),
-                                     pStmt->GetColumnBool(22),
-                                     pStmt->GetColumnString(23),
+                                     pStmt->GetColumnString(22),
+                                     pStmt->GetColumnBool(23),
                                      pStmt->GetColumnBool(24),
                                      pStmt->GetColumnBool(25),
-                                     pStmt->GetColumnBool(26)
+                                     pStmt->GetColumnInt(26)
                                     );
             ret = true;
             break;

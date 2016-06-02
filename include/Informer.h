@@ -21,7 +21,6 @@ public:
         bool blinking_reload;                 
         bool shake_reload;                 
         bool shake_mouse;                 
-        std::string bannersCss;                 //Стиль CSS РБ для отображения банеров
         std::string teasersCss;                 //Стиль CSS РБ для отображения тизеров
         std::string headerHtml;
         std::string footerHtml;
@@ -35,7 +34,8 @@ public:
         bool html_notification;                 
         bool plase_branch;                      
         bool social_branch;                      
-        bool retargeting_branch;                
+        bool retargeting_branch;
+        int rating_division;
         int height;                             //Высота блока
         int width;                              //Ширина блока
         int height_banner;                      //Высота отображаемых банеров
@@ -54,7 +54,6 @@ public:
             bool blinking_reload,                 
             bool shake_reload,                
             bool shake_mouse,                 
-            const std::string &bannersCss,
             const std::string &teasersCss,
             const std::string &headerHtml,
             const std::string &footerHtml,
@@ -69,7 +68,9 @@ public:
             const std::string &user_code,
             bool html_notification,
             bool plase_branch,
-            bool retargeting_branch);
+            bool retargeting_branch,
+            int rating_division
+                );
     virtual ~Informer();
 
     bool is_null() const
