@@ -535,23 +535,23 @@
     };
 </script>
 </head>
-<body>
-    <div id="mainContainer">
-        <div id='mainHeader'></div>
-        <div id='adsContainer'></div>
-        <div id='mainFooter'></div>
+<body class="reset">
+    <div id="mainContainer" class="reset">
+        <div id='mainHeader'class="reset"></div>
+        <div id='adsContainer' class="reset"></div>
+        <div id='mainFooter' class="reset"></div>
     </div>
     <script type="text/x-jquery-tmpl" id="advTemplate">
-        <div data-id='${id}' class='adv${c}Block'>
-            <div class='adv${c}Header'>${title}</div>
-            <div class='adv${c}Description'>${description}</div>
-            <div class='adv${c}Cost'>${price}</div>
-            <div data-image-id='${id}' class='adv${c}ImageConS' >
-                <div class='control_next'>>></div>
-                <div class='control_prev'><<</div>
-                <ul>
+        <div data-id='${id}' class='adv${c}Block reset'>
+            <div class='adv${c}Header reset'>${title}</div>
+            <div class='adv${c}Description reset'>${description}</div>
+            <div class='adv${c}Cost reset'>${price}</div>
+            <div data-image-id='${id}' class='adv${c}ImageConS reset' >
+                <div class='control_next reset'>>></div>
+                <div class='control_prev reset'><<</div>
+                <ul class="reset">
                     {{each image}}
-                            <li><img class='adv${c}ImageS' src='${$value}' alt=""/></li>
+                            <li class="reset"><img class='adv${c}ImageS reset' src='${$value}' alt=""/></li>
                     {{/each}}
                 </ul>
             </div>
