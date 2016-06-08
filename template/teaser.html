@@ -276,6 +276,7 @@
         }
         logger(items);
         bindAnalytic(items);
+        (items);
         if (informer.auto_reload)
         {
             if (iterationChange >= informer.capacity)
@@ -289,21 +290,25 @@
     var bindAnalytic = function(items){
         if (typeof(ga) == 'function')
         {
-            ga('set', 'referrer', informer.title.toLowerCase());
-            ga('send', 'pageview', {'page': informer.domain.toLowerCase(),'title': informer.account.toLowerCase()});
             $.each(items, function(i, v) {
-                ga('adload.set', 'referrer', informer.title.toLowerCase());
-                ga('adload.set', 'campaignName', v.campaign_title.toLowerCase());
-                ga('adload.set', 'campaignContent', v.title.toLowerCase());
-                ga('adload.send', 'pageview', {'page': informer.domain.toLowerCase(),'title': informer.account.toLowerCase()});
                 $("div[data-id='"+ v.id +"']>div").each(function() {
+                    var eventLabel = $(this).attr('data-name');
+                    var eventAction = 'place';
+                    if (v.retargeting)
+                    {
+                        if (v.is_recommended)
+                        {
+                            eventAction = 'recomendet';
+                        }
+                        else
+                        {
+                            eventAction = 'retargeting';
+                        }
+                    }
                     $(this).click(function(){
-                      ga('adload.set', 'referrer', informer.title.toLowerCase());
-                      ga('set', 'referrer', informer.title.toLowerCase());
-                      ga('adload.set', 'campaignName', v.campaign_title.toLowerCase());
-                      ga('adload.set', 'campaignContent', v.title.toLowerCase());
-                      ga('send', 'event', 'Link', 'Click',{'page': informer.domain.toLowerCase(),'title': informer.account.toLowerCase()});
-                      ga('adload.send', 'event','Link', 'Click',{'page': informer.domain.toLowerCase(),'title': informer.account.toLowerCase()});
+                      ga('set', 'campaignContent', v.campaign_title.toLowerCase());
+                      ga('set', 'campaignContent', v.title.toLowerCase());
+                      ga('send', 'event', {'eventCategory': 'Click','eventAction': eventAction, 'eventLabel': eventLabel});
                     });
                 });
             });
@@ -534,6 +539,7 @@
                 });
     };
 </script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
 </head>
 <body class="reset">
     <div id="mainContainer" class="reset">
@@ -543,27 +549,30 @@
     </div>
     <script type="text/x-jquery-tmpl" id="advTemplate">
         <div data-id='${id}' class='adv${c}Block reset'>
-            <div class='adv${c}Header reset'>${title}</div>
-            <div class='adv${c}Description reset'>${description}</div>
-            <div class='adv${c}Cost reset'>${price}</div>
-            <div data-image-id='${id}' class='adv${c}ImageConS reset' >
+            <div data-name='Header' class='adv${c}Header reset'>${title}</div>
+            <div data-name='Description' class='adv${c}Description reset'>${description}</div>
+            <div data-name='Cost' class='adv${c}Cost reset'>${price}</div>
+            <div data-name='Image' data-image-id='${id}' class='adv${c}ImageConS reset' >
                 <div class='control_next reset'>>></div>
                 <div class='control_prev reset'><<</div>
                 <ul class="reset">
                     {{each image}}
-                            <li class="reset"><img class='adv${c}ImageS reset' src='${$value}' alt=""/></li>
+                            <li class="reset"><img data-name='Image' class='adv${c}ImageS reset' src='${$value}' alt=""/></li>
                     {{/each}}
                 </ul>
             </div>
+            <div data-name='Button' class="adv${c}Button reset" ><span class="reset">Купить</span></div>
         </div>
     </script>
     <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-    ga('create', 'UA-41316393-1', 'auto');
-    ga('create', 'UA-72334837-1', 'auto', {'name': 'adload'});
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-78963028-1', 'auto');
+    ga('set', 'forceSSL', true);
+    ga('set', 'campaignMedium', informer.account.toLowerCase());
+    ga('set', 'campaignSource', informer.domain.toLowerCase());
+    ga('set', 'campaignName', informer.title.toLowerCase());
+    ga('set', 'title', informer.account.toLowerCase() + " - " + informer.domain.toLowerCase() + " - " + informer.title.toLowerCase());
+    ga('send', 'pageview');
     </script>
 </body>
 </html>
