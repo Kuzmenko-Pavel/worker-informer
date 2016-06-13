@@ -168,6 +168,9 @@
         }
         return $.when.apply($, getCampaignData()).then(function(place, retargeringAccount, retargering) {
             offers.items = $.merge(offers.items, offerUnion(place, retargeringAccount, retargering));
+            $.each(offers.items, function(i, v) {
+                offers.items[i].index = i;
+            });
             if (offers.items.length < 1 && !informer.social_branch)
             {
                 location.href = '/block?scr=' + informer.informer_id + '&show=usercode' 
@@ -222,10 +225,6 @@
     };
     
     var logger = function(items){
-        if (!items)
-        {
-            items = [];
-        }
         $.ajax({
             beforeSend: function(xhr, settings) {
                 var informer_data = $.extend({},informer);
@@ -235,7 +234,6 @@
             url: 'logger.json'
         });
     };
-    logger();
 
     var render = function(capacity)
     {
@@ -429,46 +427,48 @@
     
     var moveLeftSlider = function(el) {
         var data = $(el).parent().attr('data-image-id');
+        var index = $(el).parent().attr('data-image-index');
         var slideWidth = $('div[data-image-id='+ data +']>ul>li>img').width();
-        $('div[data-image-id='+ data +']>ul').animate({
+        $('div[data-image-id='+ data +'][data-image-index='+ index +']>ul').animate({
             left: + slideWidth
         }, 900, 'easeOutCirc',  function () {
-            $('div[data-image-id='+ data +']>ul>li:last-child').prependTo('div[data-image-id='+ data +']>ul');
-            $('div[data-image-id='+ data +']>ul').css('left', '');
+            $('div[data-image-id='+ data +'][data-image-index='+ index +']>ul>li:last-child').prependTo('div[data-image-id='+ data +'][data-image-index='+ index +']>ul');
+            $('div[data-image-id='+ data +'][data-image-index='+ index +']>ul').css('left', '');
         });
     };
 
     var moveRightSlider = function(el) {
         var data = $(el).parent().attr('data-image-id');
-        var slideWidth = $('div[data-image-id='+ data +']>ul>li>img').width();
-        $('div[data-image-id='+ data +']>ul').animate({
+        var index = $(el).parent().attr('data-image-index');
+        var slideWidth = $('div[data-image-id='+ data +'][data-image-index='+ index +']>ul>li>img').width();
+        $('div[data-image-id='+ data +'][data-image-index='+ index +']>ul').animate({
             left: - slideWidth
             }, 900, 'easeOutCirc', function () {
-            $('div[data-image-id='+ data +']>ul>li:first-child').appendTo('div[data-image-id='+ data +']>ul');
-            $('div[data-image-id='+ data +']>ul').css('left', '');
+            $('div[data-image-id='+ data +'][data-image-index='+ index +']>ul>li:first-child').appendTo('div[data-image-id='+ data +'][data-image-index='+ index +']>ul');
+            $('div[data-image-id='+ data +'][data-image-index='+ index +']>ul').css('left', '');
         });
     };
 
     var bindSlider = function(items){
         $.each(items, function(i, v) {
-            var slideCount = $('div[data-image-id='+ v.id +']>ul>li').length;
-            var imgCount = $('div[data-image-id='+ v.id +']>ul>li>img').length;
-            var slideWidth = $('div[data-image-id='+ v.id +']>ul>li>img').width();
-            var slideHeight = $('div[data-image-id='+ v.id +']>ul>li>img').height();
+            var slideCount = $('div[data-image-id='+ v.id +'][data-image-index='+ v.index +']>ul>li').length;
+            var imgCount = $('div[data-image-id='+ v.id +'][data-image-index='+ v.index +']>ul>li>img').length;
+            var slideWidth = $('div[data-image-id='+ v.id +'][data-image-index='+ v.index +']>ul>li>img').width();
+            var slideHeight = $('div[data-image-id='+ v.id +'][data-image-index='+ v.index +']>ul>li>img').height();
             var sliderUlWidth = slideCount * slideWidth;
-            $('div[data-image-id='+ v.id +']').css({ width: slideWidth, height: slideHeight });
+            $('div[data-image-id='+ v.id +'][data-image-index='+ v.index +']').css({ width: slideWidth, height: slideHeight });
             if (imgCount > 1)
             {
-                $('div[data-image-id='+ v.id +']>ul').css({ width: sliderUlWidth, marginLeft: - slideWidth });
-                $('div[data-image-id='+ v.id +']>ul>li:last-child').prependTo('div[data-image-id='+ v.id +']>ul');
-                $('div[data-image-id='+ v.id +']>div.control_prev').unbind();
-                $('div[data-image-id='+ v.id +']>div.control_next').unbind();
-                $('div[data-image-id='+ v.id +']>div.control_prev').click(function (event) {
+                $('div[data-image-id='+ v.id +'][data-image-index='+ v.index +']>ul').css({ width: sliderUlWidth, marginLeft: - slideWidth });
+                $('div[data-image-id='+ v.id +'][data-image-index='+ v.index +']>ul>li:last-child').prependTo('div[data-image-id='+ v.id +'][data-image-index='+ v.index +']>ul');
+                $('div[data-image-id='+ v.id +'][data-image-index='+ v.index +']>div.control_prev').unbind();
+                $('div[data-image-id='+ v.id +'][data-image-index='+ v.index +']>div.control_next').unbind();
+                $('div[data-image-id='+ v.id +'][data-image-index='+ v.index +']>div.control_prev').click(function (event) {
                     event.stopPropagation();
                     var target = $( event.target );
                     moveLeftSlider(target);
                 });
-                $('div[data-image-id='+ v.id +']>div.control_next').click(function (event) {
+                $('div[data-image-id='+ v.id +'][data-image-index='+ v.index +']>div.control_next').click(function (event) {
                     event.stopPropagation();
                     var target = $( event.target );
                     moveRightSlider(target);
@@ -476,9 +476,9 @@
             }
             else
             {
-                $('div[data-image-id='+ v.id +']>ul').css({ width: sliderUlWidth});
-                $('div[data-image-id='+ v.id +']>div.control_prev').hide();
-                $('div[data-image-id='+ v.id +']>div.control_next').hide();
+                $('div[data-image-id='+ v.id +'][data-image-index='+ v.index +']>ul').css({ width: sliderUlWidth});
+                $('div[data-image-id='+ v.id +'][data-image-index='+ v.index +']>div.control_prev').hide();
+                $('div[data-image-id='+ v.id +'][data-image-index='+ v.index +']>div.control_next').hide();
             }
         });
     };
@@ -552,7 +552,7 @@
             <div data-name='Header' class='adv${c}Header reset'>${title}</div>
             <div data-name='Description' class='adv${c}Description reset'>${description}</div>
             <div data-name='Cost' class='adv${c}Cost reset'>${price}</div>
-            <div data-name='Image' data-image-id='${id}' class='adv${c}ImageConS reset' >
+            <div data-name='Image' data-image-id='${id}' data-image-index='${index}' class='adv${c}ImageConS reset' >
                 <div class='control_next reset'>>></div>
                 <div class='control_prev reset'><<</div>
                 <ul class="reset">
