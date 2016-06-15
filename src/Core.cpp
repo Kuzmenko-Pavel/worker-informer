@@ -39,10 +39,8 @@ std::string Core::Process(Params *prms)
     if(!getInformer(params->informer_id_))
     {
         std::clog<<"there is no informer id: "<<prms->getInformerId()<<std::endl;
-        std::clog<<" ip:"<<params->getIP();
         std::clog<<" country:"<<params->getCountry();
         std::clog<<" region:"<<params->getRegion();
-        std::clog<<" cookie:"<<params->getCookieId();
         std::clog<<" informer id:"<<params->informer_id_;
         return Config::Instance()->template_error_;
     }
@@ -68,6 +66,7 @@ void Core::resultHtml()
         boost::str(boost::format(cfg->template_)
                    % informer->toJson()
                    % params->toJson()
+                   % informer->teasersCss
                 );
     if (params->test_mode_)
     {
@@ -84,10 +83,8 @@ std::string Core::UserCode(Params *prms)
     if(!getInformer(params->informer_id_))
     {
         std::clog<<"there is no informer id: "<<prms->getInformerId()<<std::endl;
-        std::clog<<" ip:"<<params->getIP();
         std::clog<<" country:"<<params->getCountry();
         std::clog<<" region:"<<params->getRegion();
-        std::clog<<" cookie:"<<params->getCookieId();
         std::clog<<" informer id:"<<params->informer_id_;
         return Config::Instance()->template_error_;
     }
@@ -112,18 +109,11 @@ void Core::log()
     {
         std::clog<<" core time:"<< boost::posix_time::to_simple_string(endCoreTime - startCoreTime);
     }
-
-    if(cfg->logIP)
-        std::clog<<" ip:"<<params->getIP();
-
     if(cfg->logCountry)
         std::clog<<" country:"<<params->getCountry();
 
     if(cfg->logRegion)
         std::clog<<" region:"<<params->getRegion();
-
-    if(cfg->logCookie)
-        std::clog<<" cookie:"<<params->getCookieId();
 
     if(cfg->logInformerId)
         std::clog<<" informer id:"<<informer->id;

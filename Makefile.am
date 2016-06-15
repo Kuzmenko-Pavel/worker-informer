@@ -19,7 +19,6 @@ SRC_ALL=src/base64.cpp \
 		src/KompexSQLiteStatement.cpp \
 		src/Params.cpp \
 		src/Cookie.cpp \
-		src/GeoIPTools.cpp \
 		src/ParentDB.cpp \
 		src/BoostHelpers.cpp \
 		src/Core_DataBase.cpp \
