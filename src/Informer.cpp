@@ -81,7 +81,6 @@ std::string Informer::toJson() const
     j["blinking_reload"] = blinking_reload;
     j["shake_reload"] = shake_reload;
     j["shake_mouse"] = shake_mouse;
-    j["teasersCss"] = teasersCss;
     j["headerHtml"] = headerHtml;
     j["footerHtml"] = footerHtml;
     j["retargeting_capacity"] = retargeting_capacity;

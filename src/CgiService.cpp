@@ -1,13 +1,19 @@
+#include <sstream>
+
+#include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/regex.hpp>
 #include <boost/regex/icu.hpp>
+#include <boost/date_time.hpp>
+#include <iostream>
+#include <string>
 #include <map>
 #include <chrono>
 
 #include "Log.h"
 #include "CgiService.h"
 #include "UrlParser.h"
-#include "GeoIPTools.h"
 #include "BaseCore.h"
 #include "Core.h"
 #include "Informer.h"
@@ -33,8 +39,6 @@ CgiService::CgiService()
 
     sigaction(SIGHUP,&actions,NULL);
     sigaction(SIGPIPE,&actions,NULL);
-
-    geoip = GeoIPTools::Instance();
 
     bcore = new BaseCore();
 
@@ -288,6 +292,14 @@ void CgiService::ProcessRequest(FCGX_Request *req, Core *core)
             }
         }
     }
+    if(cookie_value.empty())
+    {
+        std::stringstream sstr;
+        sstr << time(NULL);
+        cookie_value = sstr.str();
+    }
+    replaceSymbol = boost::make_u32regex("[^0-9]");
+    cookie_value = boost::u32regex_replace(cookie_value ,replaceSymbol,"");
 
     UrlParser *url;
     UrlParser *post;
@@ -309,20 +321,12 @@ void CgiService::ProcessRequest(FCGX_Request *req, Core *core)
     {
 
         Params prm = Params()
-                     .ip(ip, url->param("ip"))
                      .get(query)
                      .post(postq)
-                     .cookie_id(cookie_value)
                      .informer_id(url->param("scr"))
                      .country(url->param("country"))
                      .region(url->param("region"))
-                     .test_mode(url->param("test") == "true")
-                     .w(post->param("w"))
-                     .h(post->param("h"))
-                     .D(post->param("d"))
-                     .M(post->param("m"))
-                     .H(post->param("hr"))
-                     .device(post->param("device"));
+                     .test_mode(url->param("test") == "true");
 
         std::string result;
 
@@ -337,7 +341,7 @@ void CgiService::ProcessRequest(FCGX_Request *req, Core *core)
 
 
         ClearSilver::Cookie c = ClearSilver::Cookie(cfg->cookie_name_,
-                      prm.getCookieId(),
+                      cookie_value,
                       ClearSilver::Cookie::Credentials(
                                 ClearSilver::Cookie::Authority(cfg->cookie_domain_),
                                 ClearSilver::Cookie::Path(cfg->cookie_path_),
