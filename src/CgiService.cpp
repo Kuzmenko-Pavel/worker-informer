@@ -292,14 +292,22 @@ void CgiService::ProcessRequest(FCGX_Request *req, Core *core)
             }
         }
     }
+    try
+    {
+        replaceSymbol = boost::make_u32regex("[^0-9]");
+        cookie_value = boost::u32regex_replace(cookie_value ,replaceSymbol,"");
+    }
+    catch (std::exception const &ex)
+    {
+        Log::err("exception %s: name: %s while processing: %s", typeid(ex).name(), ex.what(), cookie_value.c_str());
+        cookie_value.clear();
+    }
     if(cookie_value.empty())
     {
         std::stringstream sstr;
         sstr << time(NULL);
         cookie_value = sstr.str();
     }
-    replaceSymbol = boost::make_u32regex("[^0-9]");
-    cookie_value = boost::u32regex_replace(cookie_value ,replaceSymbol,"");
 
     UrlParser *url;
     UrlParser *post;
