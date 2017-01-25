@@ -423,6 +423,14 @@
                 uh.retargeting_exclude.add(item.id,item.unique);
                 uh.retargeting_view.add(item.id);
             }
+            if(item.c == "Ret" && item.campaign_disabled_retargiting_style)
+            {   
+                item.c = "";
+            }
+            if(item.c == "Rec" && item.campaign_disabled_recomendet_style)
+            {   
+                item.c = "";
+            }
             return item;
         });
         uh.save();
@@ -443,7 +451,6 @@
         }
         logger(items);
         bindAnalytic(items);
-        (items);
         if (informer.auto_reload)
         {
             if (iterationChange >= informer.capacity)
