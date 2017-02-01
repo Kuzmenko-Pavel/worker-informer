@@ -57,183 +57,183 @@ bool ParentDB::InformerUpdate(bsoncxx::builder::stream::document query)
     if(!fConnectedToMainDatabase)
         return false;
 
-    std::unique_ptr<mongo::DBClientCursor> cursor = monga_main->query(cfg->mongo_main_db_ + ".informer", query);
+//    std::unique_ptr<mongo::DBClientCursor> cursor = monga_main->query(cfg->mongo_main_db_ + ".informer", query);
     Kompex::SQLiteStatement *pStmt;
     long long long_id = 0;
     pStmt = new Kompex::SQLiteStatement(pdb);
     try{
-    while (cursor->more())
-    {
-        mongo::BSONObj x = cursor->next();
-        std::string id = x.getStringField("guid");
-        boost::to_lower(id);
-        if (id.empty())
-        {
-            continue;
-        }
-
-        long_id = x.getField("guid_int").numberLong();
-        bzero(buf,sizeof(buf));
-        sqlite3_snprintf(sizeof(buf),buf,"SELECT id FROM Informer WHERE id=%lld;", long_id);
-        bool find = false; 
-        try
-        {
-            pStmt->Sql(buf);
-            while(pStmt->FetchRow())
-            {
-                find = true;
-                break;
-            }
-            pStmt->FreeQuery();
-        }
-        catch(Kompex::SQLiteException &ex)
-        {
-            logDb(ex);
-        }
-
-
-        int capacity = 0;
-        std::string headerHtml;
-        std::string footerHtml;
-        int social_branch = 1;
-        std::string user_code;
-        mongo::BSONElement capacity_element =
-            x.getFieldDotted("admaker.Main.itemsNumber");
-        mongo::BSONElement header_html =
-            x.getFieldDotted("admaker.MainHeader.html");
-        mongo::BSONElement footer_html =
-            x.getFieldDotted("admaker.MainFooter.html");
-        mongo::BSONElement nonrelevant_element =
-            x.getFieldDotted("nonRelevant.action");
-        mongo::BSONElement user_code_element =
-            x.getFieldDotted("nonRelevant.userCode");
-        switch (capacity_element.type())
-        {
-        case mongo::NumberInt:
-            capacity = capacity_element.numberInt();
-            break;
-        case mongo::String:
-            capacity =
-                boost::lexical_cast<int>(capacity_element.str());
-            break;
-        default:
-            capacity = 0;
-        }
-        if (nonrelevant_element.str() == "usercode")
-        {
-            social_branch = 0;
-        }
-        headerHtml = header_html.str();
-        footerHtml = footer_html.str();
-        user_code = user_code_element.str();
-
-        std::string css;
-        css = x.getStringField("css");
-        cfg->minifyhtml(css);
-       
-        if (find)
-        {
-            bzero(buf,sizeof(buf));
-            sqlite3_snprintf(sizeof(buf),buf,
-                             "UPDATE Informer SET title='%q',account='%q',domain='%q',teasersCss='%q',headerHtml='%q',footerHtml='%q',\
-                              social_branch=%d, valid=1,height=%d,width=%d,height_banner=%d,width_banner=%d,capacity=%d, auto_reload=%d,\
-                              blinking=%d, shake=%d, blinking_reload=%d, shake_reload=%d, shake_mouse=%d,\ 
-                              range_short_term=%f, range_long_term=%f, range_context=%f, range_search=%f, retargeting_capacity=%u, user_code='%q', html_notification=%d, place_branch=%d, retargeting_branch=%d,\
-                              rating_division=%d\
-                              WHERE id=%lld;",
-                             x.getStringField("title"),
-                             x.getStringField("user"),
-                             x.getStringField("domain"),
-                             css.c_str(),
-                             headerHtml.c_str(),
-                             footerHtml.c_str(),
-                             social_branch,
-                             x.getIntField("height"),
-                             x.getIntField("width"),
-                             x.getIntField("height_banner"),
-                             x.getIntField("width_banner"),
-                             capacity,
-                             x.hasField("auto_reload") ? x.getIntField("auto_reload") : 0,
-                             x.hasField("blinking") ? x.getIntField("blinking") : 0,
-                             x.hasField("shake") ? x.getIntField("shake") : 0,
-                             x.getBoolField("blinking_reload") ? 1 : 0,
-                             x.getBoolField("shake_reload") ? 1 : 0,
-                             x.getBoolField("shake_mouse") ? 1 : 0,
-                             x.hasField("range_short_term") ? x.getField("range_short_term").numberDouble() : cfg->range_short_term_,
-                             x.hasField("range_long_term") ? x.getField("range_long_term").numberDouble() : cfg->range_long_term_,
-                             x.hasField("range_context") ? x.getField("range_context").numberDouble() : cfg->range_context_,
-                             x.hasField("range_search") ? x.getField("range_search").numberDouble() : cfg->range_search_,
-                             x.hasField("retargeting_capacity") ?
-                                (unsigned)(capacity * x.getField("retargeting_capacity").numberDouble()) :
-                                (unsigned)(cfg->retargeting_percentage_ * capacity / 100),
-                             user_code.c_str(),
-                             x.getBoolField("html_notification") ? 1 : 0,
-                             x.getBoolField("plase_branch") ? 1 : 0,
-                             x.getBoolField("retargeting_branch") ? 1 : 0,
-                             x.hasField("rating_division") ? x.getIntField("rating_division") : 1000,
-                             long_id
-                            );
-        }
-        else
-        {
-            bzero(buf,sizeof(buf));
-            sqlite3_snprintf(sizeof(buf),buf,
-                             "INSERT OR IGNORE INTO Informer(id,guid,title, account, domain, teasersCss,headerHtml,footerHtml,\
-                              social_branch,valid,height,width,height_banner,width_banner,capacity, auto_reload,\
-                              blinking, shake, blinking_reload, shake_reload, shake_mouse,\ 
-                              range_short_term, range_long_term, range_context, range_search, retargeting_capacity, user_code, html_notification, place_branch, retargeting_branch,\
-                              rating_division\
-                              ) VALUES(\
-                              %lld,'%q','%q','%q','%q','%q','%q','%q',\
-                              %d,1,%d,%d,%d,%d,%d, %d,\
-                              %d,%d,%d,%d, %d,\
-                              %f,%f,%f,%f,%u,'%q',%d,%d,%d,%d);",
-                             long_id,
-                             id.c_str(),
-                             x.getStringField("title"),
-                             x.getStringField("user"),
-                             x.getStringField("domain"),
-                             css.c_str(),
-                             headerHtml.c_str(),
-                             footerHtml.c_str(),
-                             social_branch,
-                             x.getIntField("height"),
-                             x.getIntField("width"),
-                             x.getIntField("height_banner"),
-                             x.getIntField("width_banner"),
-                             capacity,
-                             x.hasField("auto_reload") ? x.getIntField("auto_reload") : 0,
-                             x.hasField("blinking") ? x.getIntField("blinking") : 0,
-                             x.hasField("shake") ? x.getIntField("shake") : 0,
-                             x.getBoolField("blinking_reload") ? 1 : 0,
-                             x.getBoolField("shake_reload") ? 1 : 0,
-                             x.getBoolField("shake_mouse") ? 1 : 0,
-                             x.hasField("range_short_term") ? x.getField("range_short_term").numberDouble() : cfg->range_short_term_,
-                             x.hasField("range_long_term") ? x.getField("range_long_term").numberDouble() : cfg->range_long_term_,
-                             x.hasField("range_context") ? x.getField("range_context").numberDouble() : cfg->range_context_,
-                             x.hasField("range_search") ? x.getField("range_search").numberDouble() : cfg->range_search_,
-                             x.hasField("retargeting_capacity") ?
-                                (unsigned)(capacity * x.getField("retargeting_capacity").numberDouble()) :
-                                (unsigned)(cfg->retargeting_percentage_ * capacity / 100),
-                             user_code.c_str(),
-                             x.getBoolField("html_notification") ? 1 : 0,
-                             x.getBoolField("plase_branch") ? 1 : 0,
-                             x.getBoolField("retargeting_branch") ? 1 : 0,
-                             x.hasField("rating_division") ? x.getIntField("rating_division") : 1000
-                            );
-
-        }
-        try
-        {
-            pStmt->SqlStatement(buf);
-        }
-        catch(Kompex::SQLiteException &ex)
-        {
-            logDb(ex);
-        }
-        bzero(buf,sizeof(buf));
-        Log::info("updated informer id %lld", long_id);
-    }
+//    while (cursor->more())
+//    {
+//        mongo::BSONObj x = cursor->next();
+//        std::string id = x.getStringField("guid");
+//        boost::to_lower(id);
+//        if (id.empty())
+//        {
+//            continue;
+//        }
+//
+//        long_id = x.getField("guid_int").numberLong();
+//        bzero(buf,sizeof(buf));
+//        sqlite3_snprintf(sizeof(buf),buf,"SELECT id FROM Informer WHERE id=%lld;", long_id);
+//        bool find = false;
+//        try
+//        {
+//            pStmt->Sql(buf);
+//            while(pStmt->FetchRow())
+//            {
+//                find = true;
+//                break;
+//            }
+//            pStmt->FreeQuery();
+//        }
+//        catch(Kompex::SQLiteException &ex)
+//        {
+//            logDb(ex);
+//        }
+//
+//
+//        int capacity = 0;
+//        std::string headerHtml;
+//        std::string footerHtml;
+//        int social_branch = 1;
+//        std::string user_code;
+//        mongo::BSONElement capacity_element =
+//            x.getFieldDotted("admaker.Main.itemsNumber");
+//        mongo::BSONElement header_html =
+//            x.getFieldDotted("admaker.MainHeader.html");
+//        mongo::BSONElement footer_html =
+//            x.getFieldDotted("admaker.MainFooter.html");
+//        mongo::BSONElement nonrelevant_element =
+//            x.getFieldDotted("nonRelevant.action");
+//        mongo::BSONElement user_code_element =
+//            x.getFieldDotted("nonRelevant.userCode");
+//        switch (capacity_element.type())
+//        {
+//        case mongo::NumberInt:
+//            capacity = capacity_element.numberInt();
+//            break;
+//        case mongo::String:
+//            capacity =
+//                boost::lexical_cast<int>(capacity_element.str());
+//            break;
+//        default:
+//            capacity = 0;
+//        }
+//        if (nonrelevant_element.str() == "usercode")
+//        {
+//            social_branch = 0;
+//        }
+//        headerHtml = header_html.str();
+//        footerHtml = footer_html.str();
+//        user_code = user_code_element.str();
+//
+//        std::string css;
+//        css = x.getStringField("css");
+//        cfg->minifyhtml(css);
+//
+//        if (find)
+//        {
+//            bzero(buf,sizeof(buf));
+//            sqlite3_snprintf(sizeof(buf),buf,
+//                             "UPDATE Informer SET title='%q',account='%q',domain='%q',teasersCss='%q',headerHtml='%q',footerHtml='%q',\
+//                              social_branch=%d, valid=1,height=%d,width=%d,height_banner=%d,width_banner=%d,capacity=%d, auto_reload=%d,\
+//                              blinking=%d, shake=%d, blinking_reload=%d, shake_reload=%d, shake_mouse=%d,\
+//                              range_short_term=%f, range_long_term=%f, range_context=%f, range_search=%f, retargeting_capacity=%u, user_code='%q', html_notification=%d, place_branch=%d, retargeting_branch=%d,\
+//                              rating_division=%d\
+//                              WHERE id=%lld;",
+//                             x.getStringField("title"),
+//                             x.getStringField("user"),
+//                             x.getStringField("domain"),
+//                             css.c_str(),
+//                             headerHtml.c_str(),
+//                             footerHtml.c_str(),
+//                             social_branch,
+//                             x.getIntField("height"),
+//                             x.getIntField("width"),
+//                             x.getIntField("height_banner"),
+//                             x.getIntField("width_banner"),
+//                             capacity,
+//                             x.hasField("auto_reload") ? x.getIntField("auto_reload") : 0,
+//                             x.hasField("blinking") ? x.getIntField("blinking") : 0,
+//                             x.hasField("shake") ? x.getIntField("shake") : 0,
+//                             x.getBoolField("blinking_reload") ? 1 : 0,
+//                             x.getBoolField("shake_reload") ? 1 : 0,
+//                             x.getBoolField("shake_mouse") ? 1 : 0,
+//                             x.hasField("range_short_term") ? x.getField("range_short_term").numberDouble() : cfg->range_short_term_,
+//                             x.hasField("range_long_term") ? x.getField("range_long_term").numberDouble() : cfg->range_long_term_,
+//                             x.hasField("range_context") ? x.getField("range_context").numberDouble() : cfg->range_context_,
+//                             x.hasField("range_search") ? x.getField("range_search").numberDouble() : cfg->range_search_,
+//                             x.hasField("retargeting_capacity") ?
+//                                (unsigned)(capacity * x.getField("retargeting_capacity").numberDouble()) :
+//                                (unsigned)(cfg->retargeting_percentage_ * capacity / 100),
+//                             user_code.c_str(),
+//                             x.getBoolField("html_notification") ? 1 : 0,
+//                             x.getBoolField("plase_branch") ? 1 : 0,
+//                             x.getBoolField("retargeting_branch") ? 1 : 0,
+//                             x.hasField("rating_division") ? x.getIntField("rating_division") : 1000,
+//                             long_id
+//                            );
+//        }
+//        else
+//        {
+//            bzero(buf,sizeof(buf));
+//            sqlite3_snprintf(sizeof(buf),buf,
+//                             "INSERT OR IGNORE INTO Informer(id,guid,title, account, domain, teasersCss,headerHtml,footerHtml,\
+//                              social_branch,valid,height,width,height_banner,width_banner,capacity, auto_reload,\
+//                              blinking, shake, blinking_reload, shake_reload, shake_mouse,\
+//                              range_short_term, range_long_term, range_context, range_search, retargeting_capacity, user_code, html_notification, place_branch, retargeting_branch,\
+//                              rating_division\
+//                              ) VALUES(\
+//                              %lld,'%q','%q','%q','%q','%q','%q','%q',\
+//                              %d,1,%d,%d,%d,%d,%d, %d,\
+//                              %d,%d,%d,%d, %d,\
+//                              %f,%f,%f,%f,%u,'%q',%d,%d,%d,%d);",
+//                             long_id,
+//                             id.c_str(),
+//                             x.getStringField("title"),
+//                             x.getStringField("user"),
+//                             x.getStringField("domain"),
+//                             css.c_str(),
+//                             headerHtml.c_str(),
+//                             footerHtml.c_str(),
+//                             social_branch,
+//                             x.getIntField("height"),
+//                             x.getIntField("width"),
+//                             x.getIntField("height_banner"),
+//                             x.getIntField("width_banner"),
+//                             capacity,
+//                             x.hasField("auto_reload") ? x.getIntField("auto_reload") : 0,
+//                             x.hasField("blinking") ? x.getIntField("blinking") : 0,
+//                             x.hasField("shake") ? x.getIntField("shake") : 0,
+//                             x.getBoolField("blinking_reload") ? 1 : 0,
+//                             x.getBoolField("shake_reload") ? 1 : 0,
+//                             x.getBoolField("shake_mouse") ? 1 : 0,
+//                             x.hasField("range_short_term") ? x.getField("range_short_term").numberDouble() : cfg->range_short_term_,
+//                             x.hasField("range_long_term") ? x.getField("range_long_term").numberDouble() : cfg->range_long_term_,
+//                             x.hasField("range_context") ? x.getField("range_context").numberDouble() : cfg->range_context_,
+//                             x.hasField("range_search") ? x.getField("range_search").numberDouble() : cfg->range_search_,
+//                             x.hasField("retargeting_capacity") ?
+//                                (unsigned)(capacity * x.getField("retargeting_capacity").numberDouble()) :
+//                                (unsigned)(cfg->retargeting_percentage_ * capacity / 100),
+//                             user_code.c_str(),
+//                             x.getBoolField("html_notification") ? 1 : 0,
+//                             x.getBoolField("plase_branch") ? 1 : 0,
+//                             x.getBoolField("retargeting_branch") ? 1 : 0,
+//                             x.hasField("rating_division") ? x.getIntField("rating_division") : 1000
+//                            );
+//
+//        }
+//        try
+//        {
+//            pStmt->SqlStatement(buf);
+//        }
+//        catch(Kompex::SQLiteException &ex)
+//        {
+//            logDb(ex);
+//        }
+//        bzero(buf,sizeof(buf));
+//        Log::info("updated informer id %lld", long_id);
+//    }
     }
     catch(std::exception const &ex)
     {
