@@ -1,10 +1,6 @@
-#include "DB.h"
-
 #include <boost/regex.hpp>
 
 #include <sstream>
-
-#include <mongo/util/net/hostandport.h>
 
 #include "../config.h"
 
@@ -21,7 +17,7 @@ BaseCore::BaseCore()
 {
     time_service_started_ = boost::posix_time::second_clock::local_time();
 
-    pdb = new ParentDB();
+    //pdb = new ParentDB();
     
     InitMessageQueue();
 
@@ -30,7 +26,7 @@ BaseCore::BaseCore()
 
 BaseCore::~BaseCore()
 {
-    delete pdb;
+    //delete pdb;
     delete amqp_;
 }
 
@@ -74,11 +70,11 @@ bool BaseCore::ProcessMQ()
 
                 if(m->getRoutingKey() == "informer.update")
                 {
-                    pdb->InformerUpdate(QUERY("guid" << toString(m)));
+                    //pdb->InformerUpdate(QUERY("guid" << toString(m)));
                 }
                 else if(m->getRoutingKey() == "informer.delete")
                 {
-                    pdb->InformerRemove(toString(m));
+                    //pdb->InformerRemove(toString(m));
                 }
                 mq_informer_->Get(AMQP_NOACK);
                 m = mq_informer_->getMessage();
@@ -101,7 +97,7 @@ bool BaseCore::ProcessMQ()
                 if(m->getRoutingKey() == "account.update")
                 {
                     std::string accountName = toString(m);
-                    pdb->InformerUpdate(QUERY("user" << accountName));
+                    //pdb->InformerUpdate(QUERY("user" << accountName));
                 }
 
                 mq_account_->Get(AMQP_NOACK);
@@ -134,7 +130,7 @@ void BaseCore::LoadAllEntities()
         return;
     }
     //Загрузили все информеры
-    pdb->InformerLoadAll();
+    //pdb->InformerLoadAll();
 
     //загрузили рейтинг
     cfg->pDb->indexRebuild();

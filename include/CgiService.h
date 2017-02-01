@@ -8,7 +8,6 @@
 #include "CpuStat.h"
 
 #include <fcgiapp.h>
-#include <mongo/client/dbclient_rs.h>
 
 class Core;
 

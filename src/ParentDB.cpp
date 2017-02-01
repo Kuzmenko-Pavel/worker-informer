@@ -1,12 +1,16 @@
 #include <vector>
 #include <boost/algorithm/string.hpp>
 #include "../config.h"
+#include <mongocxx/pool.hpp>
+#include <mongocxx/instance.hpp>
+#include <bsoncxx/json.hpp>
 
 #include "ParentDB.h"
 #include "Log.h"
 #include "KompexSQLiteStatement.h"
 #include "json.h"
 #include "Config.h"
+mongocxx::instance instance{};
 
 ParentDB::ParentDB()
 {
@@ -26,40 +30,11 @@ bool ParentDB::ConnectMainDatabase()
     if(fConnectedToMainDatabase)
         return true;
 
-    std::vector<mongo::HostAndPort> hvec;
-    for(auto h = cfg->mongo_main_host_.begin(); h != cfg->mongo_main_host_.end(); ++h)
-    {
-        hvec.push_back(mongo::HostAndPort(*h));
-        std::clog<<"Connecting to: "<<(*h)<<std::endl;
-    }
-
     try
     {
-        if(!cfg->mongo_main_set_.empty())
-        {
-            monga_main = new mongo::DBClientReplicaSet(cfg->mongo_main_set_, hvec);
-            monga_main->connect();
-        }
-
-
-        if(!cfg->mongo_main_login_.empty())
-        {
-            std::string err;
-            if(!monga_main->auth(cfg->mongo_main_db_,cfg->mongo_main_login_,cfg->mongo_main_passwd_, err))
-            {
-                std::clog<<"auth db: "<<cfg->mongo_main_db_<<" login: "<<cfg->mongo_main_login_<<" error: "<<err<<std::endl;
-            }
-            else
-            {
-                fConnectedToMainDatabase = true;
-            }
-        }
-        else
-        {
-            fConnectedToMainDatabase = true;
-        }
+	monga_main = new mongocxx::pool{mongocxx::uri{}};
     }
-    catch (mongo::UserException &ex)
+    catch (Exception &ex)
     {
         std::clog<<"ParentDB::"<<__func__<<" mongo error: "<<ex.what()<<std::endl;
         return false;
@@ -73,11 +48,11 @@ bool ParentDB::InformerLoadAll()
 {
     if(!fConnectedToMainDatabase)
         return false;
-    InformerUpdate(mongo::Query());
+    InformerUpdate(bsoncxx::builder::stream::document{});
     return true;
 }
 
-bool ParentDB::InformerUpdate(mongo::Query query)
+bool ParentDB::InformerUpdate(bsoncxx::builder::stream::document query)
 {
     if(!fConnectedToMainDatabase)
         return false;

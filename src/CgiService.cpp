@@ -283,7 +283,7 @@ void CgiService::ProcessRequest(FCGX_Request *req, Core *core)
 
         for (unsigned int i=0; i<strs.size(); i++)
         {
-            if(strs[i].find(cfg->cookie_name_) != string::npos)
+            if(strs[i].find(cfg->cookie_name_) != std::string::npos)
             {
                 std::vector<std::string> name_value;
                 boost::split(name_value, strs[i], boost::is_any_of("="));
