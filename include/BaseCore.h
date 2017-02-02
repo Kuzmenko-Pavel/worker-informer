@@ -4,9 +4,9 @@
 #include "../config.h"
 #include <boost/date_time.hpp>
 #include <boost/circular_buffer.hpp>
-#include <amqpcpp.h>
+#include <AMQPcpp.h>
 #include "DataBase.h"
-//#include "ParentDB.h"
+#include "ParentDB.h"
 
 /// Класс, который связывает воедино все части системы.
 class BaseCore
@@ -55,7 +55,7 @@ private:
     std::string toString(AMQPMessage *m);
     boost::circular_buffer<std::string> mq_log_ = boost::circular_buffer<std::string>(100);
 
-    //ParentDB *pdb;
+    ParentDB *pdb;
 };
 
 

@@ -68,6 +68,7 @@ AS_HELP_STRING([--enable-debug],
 		[debug=false])
 AM_CONDITIONAL(DEBUG, test x"$debug" = x"true")
 PKG_CHECK_MODULES(MONGO, libmongocxx)
+PKG_CHECK_MODULES(SQL, kompex-sqlite-wrapper)
 AC_CHECK_LIB([amqpcpp],[main],[],[AC_MSG_ERROR([amqpcpp library missing])])
 AC_CHECK_LIB([mongocxx],[main],[],[AC_MSG_WARN([mongocxx library missing])])
 AC_CHECK_LIB([bsoncxx],[main],[],[AC_MSG_WARN([bsoncxx library missing])])

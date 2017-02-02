@@ -1,5 +1,10 @@
 #include <boost/regex.hpp>
-
+#include <bsoncxx/json.hpp>
+#include <bsoncxx/builder/stream/array.hpp>
+#include <bsoncxx/builder/stream/document.hpp>
+#include <bsoncxx/builder/stream/helpers.hpp>
+#include <bsoncxx/types.hpp>
+#include <mongocxx/stdx.hpp>
 #include <sstream>
 
 #include "../config.h"
@@ -10,8 +15,16 @@
 #include "Informer.h"
 #include "Config.h"
 #include "CpuStat.h"
+#include "ParentDB.h"
 
 #define MAXCOUNT 1000
+
+using bsoncxx::builder::stream::close_array;
+using bsoncxx::builder::stream::close_document;
+using bsoncxx::builder::stream::document;
+using bsoncxx::builder::stream::finalize;
+using bsoncxx::builder::stream::open_array;
+using bsoncxx::builder::stream::open_document;
 
 BaseCore::BaseCore()
 {
@@ -70,7 +83,8 @@ bool BaseCore::ProcessMQ()
 
                 if(m->getRoutingKey() == "informer.update")
                 {
-                    pdb->InformerUpdate(QUERY("guid" << toString(m)));
+		    auto builder = bsoncxx::builder::stream::document{};
+                    pdb->InformerUpdate(builder << "guid" << toString(m) << finalize);
                 }
                 else if(m->getRoutingKey() == "informer.delete")
                 {
@@ -96,8 +110,8 @@ bool BaseCore::ProcessMQ()
 
                 if(m->getRoutingKey() == "account.update")
                 {
-                    std::string accountName = toString(m);
-                    pdb->InformerUpdate(QUERY("user" << accountName));
+		    auto builder = bsoncxx::builder::stream::document{};
+                    pdb->InformerUpdate(builder << "user" << toString(m) << finalize);
                 }
 
                 mq_account_->Get(AMQP_NOACK);

@@ -4,6 +4,11 @@
 #include <mongocxx/pool.hpp>
 #include <mongocxx/instance.hpp>
 #include <bsoncxx/json.hpp>
+#include <bsoncxx/builder/stream/array.hpp>
+#include <bsoncxx/builder/stream/document.hpp>
+#include <bsoncxx/builder/stream/helpers.hpp>
+#include <bsoncxx/types.hpp>
+#include <mongocxx/stdx.hpp>
 
 #include "ParentDB.h"
 #include "Log.h"
@@ -34,7 +39,7 @@ bool ParentDB::ConnectMainDatabase()
     {
 	monga_main = new mongocxx::pool{mongocxx::uri{}};
     }
-    catch (Exception &ex)
+    catch (std::exception const &ex)
     {
         std::clog<<"ParentDB::"<<__func__<<" mongo error: "<<ex.what()<<std::endl;
         return false;
@@ -48,11 +53,11 @@ bool ParentDB::InformerLoadAll()
 {
     if(!fConnectedToMainDatabase)
         return false;
-    InformerUpdate(bsoncxx::builder::stream::document{});
+    InformerUpdate(bsoncxx::builder::stream::document{} << bsoncxx::builder::stream::finalize);
     return true;
 }
 
-bool ParentDB::InformerUpdate(bsoncxx::builder::stream::document query)
+bool ParentDB::InformerUpdate(bsoncxx::document::value query)
 {
     if(!fConnectedToMainDatabase)
         return false;

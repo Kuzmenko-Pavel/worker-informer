@@ -14,7 +14,7 @@ public:
     virtual ~ParentDB();
 
     bool InformerLoadAll();
-    bool InformerUpdate(bsoncxx::builder::stream::document);
+    bool InformerUpdate(bsoncxx::document::value);
     void InformerRemove(const std::string &id);
 
 private:

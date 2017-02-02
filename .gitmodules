@@ -7,3 +7,6 @@
 [submodule "libs/amqpcpp"]
 	path = libs/amqpcpp
 	url = git@github.com:Kuzmenko-Pavel/amqpcpp.git
+[submodule "libs/kompex-sqlite-wrapper"]
+	path = libs/kompex-sqlite-wrapper
+	url = git@github.com:Kuzmenko-Pavel/kompex-sqlite-wrapper.git

@@ -1,4 +1,6 @@
-[33m328b8e5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmongocxx_3_1_x[m[33m, [m[1;31morigin/mongocxx_3_1_x[m[33m)[m add lib
+[33ma219e82[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmongocxx_3_1_x[m[33m, [m[1;31morigin/mongocxx_3_1_x[m[33m)[m commit mongodb code
+[33m99713f6[m add amqp lib
+[33m328b8e5[m add lib
 [33mc367e2d[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m)[m Merge branch 'master' of github.com:Kuzmenko-Pavel/worker-informer
 [33mbfa67fb[m add disabled stype from campaign
 [33md4579bc[m add disabled stype from campaign
