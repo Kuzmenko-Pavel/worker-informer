@@ -5,19 +5,16 @@ AC_INIT([worker-informer], m4_esyscmd([echo -n $(git describe --all --tags --lon
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([subdir-objects])
 
-AC_PROG_CC
 AC_PROG_CXX
-AC_PROG_MAKE_SET
-AM_PROG_CC_C_O
-
 AC_LANG_CPLUSPLUS
+AC_LANG_PUSH([C++])
+AC_PROG_MAKE_SET
+AC_DISABLE_STATIC
 
 
 dnl Check for libtool
 LT_PREREQ([2.2.6])
-LT_INIT([disable-static])
-LTCFLAGS="-O2"
-LTCXXFLAGS="-O2"
+LT_INIT
 
 AC_SUBST([DOLLAR_SIGN],[$])
 
@@ -69,6 +66,7 @@ AS_HELP_STRING([--enable-debug],
 AM_CONDITIONAL(DEBUG, test x"$debug" = x"true")
 PKG_CHECK_MODULES(MONGO, libmongocxx)
 PKG_CHECK_MODULES(SQL, kompex-sqlite-wrapper)
+PKG_CHECK_MODULES(AMQP, librabbitmq)
 AC_CHECK_LIB([amqpcpp],[main],[],[AC_MSG_ERROR([amqpcpp library missing])])
 AC_CHECK_LIB([mongocxx],[main],[],[AC_MSG_WARN([mongocxx library missing])])
 AC_CHECK_LIB([bsoncxx],[main],[],[AC_MSG_WARN([bsoncxx library missing])])
@@ -84,8 +82,6 @@ BOOST_FILESYSTEM()
 BOOST_THREADS()
 BOOST_DATE_TIME()
 BOOST_REGEX()
-
-CPPFLAGS="-W -Wall"
 
 AC_CONFIG_HEADERS([config.h])
 

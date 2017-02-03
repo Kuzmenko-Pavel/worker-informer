@@ -6,9 +6,8 @@
 #include <bsoncxx/types.hpp>
 #include <mongocxx/stdx.hpp>
 #include <sstream>
-
+#include <AMQPcpp.h>
 #include "../config.h"
-
 #include "Log.h"
 #include "BaseCore.h"
 #include "base64.h"
@@ -48,12 +47,8 @@ std::string BaseCore::toString(AMQPMessage *m)
     unsigned len;
     char *pMes;
 
-#ifdef AMQPCPP_OLD
     pMes = m->getMessage();
     len = strlen(pMes);
-#else
-    pMes = m->getMessage(&len);
-#endif // AMQPCPP_OLD
 
     return std::string(pMes,len);
 }

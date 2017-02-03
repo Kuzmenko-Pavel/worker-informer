@@ -4,8 +4,8 @@
 #include <mongocxx/pool.hpp>
 #include <mongocxx/instance.hpp>
 #include <bsoncxx/json.hpp>
-#include "KompexSQLiteDatabase.h"
-#include "KompexSQLiteException.h"
+#include <KompexSQLiteDatabase.h>
+#include <KompexSQLiteException.h>
 
 class ParentDB
 {
