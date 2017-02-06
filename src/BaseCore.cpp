@@ -46,10 +46,7 @@ std::string BaseCore::toString(AMQPMessage *m)
 {
     unsigned len;
     char *pMes;
-
-    pMes = m->getMessage();
-    len = strlen(pMes);
-
+    pMes = m->getMessage(&len);
     return std::string(pMes,len);
 }
 
