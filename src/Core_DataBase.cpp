@@ -102,4 +102,5 @@ bool Core_DataBase::clear()
 {
     if(informer)
         delete informer;
+    return true;
 }

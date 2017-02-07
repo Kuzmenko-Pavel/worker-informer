@@ -1,11 +1,11 @@
 #ifndef PARENTDB_H
 #define PARENTDB_H
 
-#include <mongocxx/pool.hpp>
-#include <mongocxx/instance.hpp>
-#include <bsoncxx/json.hpp>
+#include <bsoncxx/builder/basic/document.hpp>
 #include <KompexSQLiteDatabase.h>
 #include <KompexSQLiteException.h>
+
+using bsoncxx::builder::basic::document;
 
 class ParentDB
 {
@@ -13,17 +13,13 @@ public:
     ParentDB();
     virtual ~ParentDB();
 
-    bool InformerLoadAll();
-    bool InformerUpdate(bsoncxx::document::value);
+    bool InformerUpdate(document &query);
     void InformerRemove(const std::string &id);
 
 private:
-    bool fConnectedToMainDatabase;
     Kompex::SQLiteDatabase *pdb;
     char buf[262144];
     void logDb(const Kompex::SQLiteException &ex) const;
-    mongocxx::pool *monga_main;
-    bool ConnectMainDatabase();
 };
 
 #endif // PARENTDB_H

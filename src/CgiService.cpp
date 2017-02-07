@@ -212,7 +212,6 @@ void CgiService::ProcessRequest(FCGX_Request *req, Core *core)
     }
     char *tmp_str = nullptr;
     std::string query, ip, script_name, cookie_value, postq;
-    boost::u32regex replaceSymbol;
 
 
     if (!(tmp_str = FCGX_GetParam("QUERY_STRING", req->envp)))
@@ -294,7 +293,6 @@ void CgiService::ProcessRequest(FCGX_Request *req, Core *core)
     }
     try
     {
-        replaceSymbol = boost::make_u32regex("[^0-9]");
         cookie_value = boost::u32regex_replace(cookie_value ,replaceSymbol,"");
     }
     catch (std::exception const &ex)

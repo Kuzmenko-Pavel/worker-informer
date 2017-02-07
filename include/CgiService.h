@@ -6,6 +6,8 @@
 #include "BaseCore.h"
 #include "Config.h"
 #include "CpuStat.h"
+#include <boost/regex.hpp>
+#include <boost/regex/icu.hpp>
 
 #include <fcgiapp.h>
 
@@ -85,6 +87,7 @@ private:
     void ProcessRequest(FCGX_Request*, Core *);
 private:
     std::string server_name;
+    boost::u32regex replaceSymbol = boost::make_u32regex("[^0-9]");
     BaseCore *bcore;
     pthread_t *threads;
     CpuStat *stat;

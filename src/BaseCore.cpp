@@ -1,10 +1,7 @@
 #include <boost/regex.hpp>
-#include <bsoncxx/json.hpp>
-#include <bsoncxx/builder/stream/array.hpp>
-#include <bsoncxx/builder/stream/document.hpp>
-#include <bsoncxx/builder/stream/helpers.hpp>
+#include <bsoncxx/builder/basic/document.hpp>
+#include <bsoncxx/builder/basic/kvp.hpp>
 #include <bsoncxx/types.hpp>
-#include <mongocxx/stdx.hpp>
 #include <sstream>
 #include <AMQPcpp.h>
 #include "../config.h"
@@ -18,12 +15,8 @@
 
 #define MAXCOUNT 1000
 
-using bsoncxx::builder::stream::close_array;
-using bsoncxx::builder::stream::close_document;
-using bsoncxx::builder::stream::document;
-using bsoncxx::builder::stream::finalize;
-using bsoncxx::builder::stream::open_array;
-using bsoncxx::builder::stream::open_document;
+using bsoncxx::builder::basic::document;
+using bsoncxx::builder::basic::kvp;
 
 BaseCore::BaseCore()
 {
@@ -68,15 +61,11 @@ bool BaseCore::ProcessMQ()
             {
                 mq_log_.push_back(m->getRoutingKey() + ":" +toString(m) + "</br>");
 
-                if(cfg->logMQ)
-                {
-                    std::clog<<"mq: cmd:"<<m->getRoutingKey()<<toString(m)<<std::endl;
-                }
-
                 if(m->getRoutingKey() == "informer.update")
                 {
-		    auto builder = bsoncxx::builder::stream::document{};
-                    pdb->InformerUpdate(builder << "guid" << toString(m) << finalize);
+                    auto filter = document{};
+                    filter.append(kvp("guid", toString(m)));
+                    pdb->InformerUpdate(filter);
                 }
                 else if(m->getRoutingKey() == "informer.delete")
                 {
@@ -95,15 +84,11 @@ bool BaseCore::ProcessMQ()
             {
                 mq_log_.push_back(m->getRoutingKey() + ":" +toString(m) + "</br>");
 
-                if(cfg->logMQ)
-                {
-                    std::clog<<"mq: cmd:"<<m->getRoutingKey()<<toString(m)<<std::endl;
-                }
-
                 if(m->getRoutingKey() == "account.update")
                 {
-		    auto builder = bsoncxx::builder::stream::document{};
-                    pdb->InformerUpdate(builder << "user" << toString(m) << finalize);
+                    auto filter = document{};
+                    filter.append(kvp("user", toString(m)));
+                    pdb->InformerUpdate(filter);
                 }
 
                 mq_account_->Get(AMQP_NOACK);
@@ -136,7 +121,8 @@ void BaseCore::LoadAllEntities()
         return;
     }
     //Загрузили все информеры
-    pdb->InformerLoadAll();
+    auto filter = document{};
+    pdb->InformerUpdate(filter);
 
     //загрузили рейтинг
     cfg->pDb->indexRebuild();
@@ -248,12 +234,11 @@ std::string BaseCore::Status(const std::string &server_name)
 
     out << "<tr><td>Основная база данных:</td> <td>" <<
         cfg->mongo_main_db_<< "/";
-    out << "<br/>slave_ok = " << (cfg->mongo_main_slave_ok_? "true" : "false");
     out << "<br/>replica set=";
-    if (cfg->mongo_main_set_.empty())
+    if (cfg->mongo_main_url_.empty())
         out << "no set";
     else
-        out << cfg->mongo_main_set_;
+        out << cfg->mongo_main_url_;
     out << "</td></tr>";
     out << "<tr><td>AMQP:</td><td>" << (amqp_? "активен" : "не активен") << "</td></tr>";
     out <<  "<tr><td>Сборка: </td><td>" << __DATE__ << " " << __TIME__<<"</td></tr>";
