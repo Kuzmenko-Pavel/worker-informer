@@ -4,6 +4,7 @@
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
 #include <map>
+#include <string>
 
 #include <ctime>
 #include <cstdlib>
@@ -13,7 +14,6 @@
 
 #include "Config.h"
 #include "Core.h"
-#include "DB.h"
 #include "base64.h"
 
 Core::Core()

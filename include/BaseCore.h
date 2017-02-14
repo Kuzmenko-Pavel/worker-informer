@@ -1,18 +1,10 @@
 #ifndef BASECORE_H
 #define BASECORE_H
-
+#include <string>
 #include "../config.h"
-
 #include <boost/date_time.hpp>
 #include <boost/circular_buffer.hpp>
-
-#ifndef AMQPCPP_OLD
 #include <AMQPcpp.h>
-#else
-#include <amqpcpp.h>
-#endif
-
-
 #include "DataBase.h"
 #include "ParentDB.h"
 
@@ -61,7 +53,7 @@ private:
     AMQPQueue *mq_account_;
 
     std::string toString(AMQPMessage *m);
-    boost::circular_buffer<string> mq_log_ = boost::circular_buffer<string>(100);
+    boost::circular_buffer<std::string> mq_log_ = boost::circular_buffer<std::string>(100);
 
     ParentDB *pdb;
 };

@@ -1,33 +1,73 @@
-[33m3ebe67e ([1;36mHEAD[m[33m, [1;31morigin/master[m[33m, [1;31morigin/HEAD[m[33m, [1;32mmaster[m[33m)[m update cache manifest
+[33mb0a9b78[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmongocxx_3_1_x[m[33m)[m update lib
+[33ma219e82[m[33m ([m[1;31morigin/mongocxx_3_1_x[m[33m)[m commit mongodb code
+[33m99713f6[m add amqp lib
+[33m328b8e5[m add lib
+[33mc367e2d[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m)[m Merge branch 'master' of github.com:Kuzmenko-Pavel/worker-informer
+[33mbfa67fb[m add disabled stype from campaign
+[33md4579bc[m add disabled stype from campaign
+[33m3e576b6[m update cache manifest
+[33m3ebe67e[m update cache manifest
+[33m4efe2d7[m add dom red
 [33mab2162e[m add dom red
+[33mfd856b4[m fix
 [33m69471e6[m fix
+[33maee112b[m add aplication cache
 [33mfd95a07[m add aplication cache
+[33mcdfb414[m disable favicon reqest
 [33m155b12f[m disable favicon reqest
+[33mf0239c3[m change flow
 [33ma049115[m change flow
+[33m1f80888[m fix image slider
 [33m1eb647f[m fix image slider
+[33m53ab342[m add button and change analytyc
 [33mf25a8e4[m add button and change analytyc
+[33m347b2d0[m change css
 [33m0853ce1[m change css
+[33mfa91fdf[m add rating division
 [33ma59e79b[m add rating division
+[33mdacc6a9[m add rating division
 [33m407d4ea[m add rating division
+[33m0cb7885[m update slider
 [33m69698ab[m update slider
+[33m08c3ce3[m add image slider
 [33mbad3611[m add image slider
+[33mff7eaa4[m change lib
 [33m09cf1fe[m change lib
+[33m2daee21[m add block effect
 [33m1572714[m add block effect
+[33m0435f28[m fix offer dublicates
 [33m57f961f[m fix offer dublicates
+[33mf38f13b[m disabled ajax timeout
 [33mbe26249[m disabled ajax timeout
+[33m43e34e4[m change clean history
 [33m1dca227[m change clean history
+[33m80d402a[m fix template timeout
 [33m42a8dea[m fix template timeout
+[33md89c801[m fix log
 [33m354787e[m fix log
+[33m4eb5f1a[m update install
 [33m5dfef0e[m update install
+[33mc41141d[m update install
 [33m5ac6efe[m update install
+[33m620f6bf[m update url
 [33mf9df6b5[m update url
+[33mf2e956b[m fix
 [33md7c7ef0[m fix
+[33mebc342a[m fix
 [33m1e9d06a[m fix
+[33m7738cf9[m fix
 [33m0ec57c3[m fix
+[33m6899571[m fix
 [33mb025588[m fix
+[33m080e6a0[m update user code logick
 [33m7c1bd22[m update user code logick
+[33md699c5d[m update module
 [33m8633f44[m update module
+[33m47ae02b[m change js logic
 [33m819019e[m change js logic
+[33m997d3b8[m update logic
 [33m16ba1ac[m update logic
+[33m04777b6[m change
 [33m183ffe3[m change
+[33m570f537[m initial progect
 [33m3f6ede1[m initial progect

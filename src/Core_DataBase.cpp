@@ -4,8 +4,8 @@
 #include <vector>
 #include <map>
 #include <chrono>
-#include "KompexSQLiteStatement.h"
-#include "KompexSQLiteException.h"
+#include <KompexSQLiteStatement.h>
+#include <KompexSQLiteException.h>
 #include "Config.h"
 #include "../config.h"
 
@@ -102,4 +102,5 @@ bool Core_DataBase::clear()
 {
     if(informer)
         delete informer;
+    return true;
 }

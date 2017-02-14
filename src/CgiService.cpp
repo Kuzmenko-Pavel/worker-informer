@@ -212,7 +212,6 @@ void CgiService::ProcessRequest(FCGX_Request *req, Core *core)
     }
     char *tmp_str = nullptr;
     std::string query, ip, script_name, cookie_value, postq;
-    boost::u32regex replaceSymbol;
 
 
     if (!(tmp_str = FCGX_GetParam("QUERY_STRING", req->envp)))
@@ -283,7 +282,7 @@ void CgiService::ProcessRequest(FCGX_Request *req, Core *core)
 
         for (unsigned int i=0; i<strs.size(); i++)
         {
-            if(strs[i].find(cfg->cookie_name_) != string::npos)
+            if(strs[i].find(cfg->cookie_name_) != std::string::npos)
             {
                 std::vector<std::string> name_value;
                 boost::split(name_value, strs[i], boost::is_any_of("="));
@@ -294,7 +293,6 @@ void CgiService::ProcessRequest(FCGX_Request *req, Core *core)
     }
     try
     {
-        replaceSymbol = boost::make_u32regex("[^0-9]");
         cookie_value = boost::u32regex_replace(cookie_value ,replaceSymbol,"");
     }
     catch (std::exception const &ex)

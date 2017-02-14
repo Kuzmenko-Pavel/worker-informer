@@ -1,21 +1,22 @@
-#include "DB.h"
-
 #include <boost/regex.hpp>
-
+#include <bsoncxx/builder/basic/document.hpp>
+#include <bsoncxx/builder/basic/kvp.hpp>
+#include <bsoncxx/types.hpp>
 #include <sstream>
-
-#include <mongo/util/net/hostandport.h>
-
+#include <AMQPcpp.h>
 #include "../config.h"
-
 #include "Log.h"
 #include "BaseCore.h"
 #include "base64.h"
 #include "Informer.h"
 #include "Config.h"
 #include "CpuStat.h"
+#include "ParentDB.h"
 
 #define MAXCOUNT 1000
+
+using bsoncxx::builder::basic::document;
+using bsoncxx::builder::basic::kvp;
 
 BaseCore::BaseCore()
 {
@@ -38,14 +39,7 @@ std::string BaseCore::toString(AMQPMessage *m)
 {
     unsigned len;
     char *pMes;
-
-#ifdef AMQPCPP_OLD
-    pMes = m->getMessage();
-    len = strlen(pMes);
-#else
     pMes = m->getMessage(&len);
-#endif // AMQPCPP_OLD
-
     return std::string(pMes,len);
 }
 
@@ -67,14 +61,11 @@ bool BaseCore::ProcessMQ()
             {
                 mq_log_.push_back(m->getRoutingKey() + ":" +toString(m) + "</br>");
 
-                if(cfg->logMQ)
-                {
-                    std::clog<<"mq: cmd:"<<m->getRoutingKey()<<toString(m)<<std::endl;
-                }
-
                 if(m->getRoutingKey() == "informer.update")
                 {
-                    pdb->InformerUpdate(QUERY("guid" << toString(m)));
+                    auto filter = document{};
+                    filter.append(kvp("guid", toString(m)));
+                    pdb->InformerUpdate(filter);
                 }
                 else if(m->getRoutingKey() == "informer.delete")
                 {
@@ -93,15 +84,11 @@ bool BaseCore::ProcessMQ()
             {
                 mq_log_.push_back(m->getRoutingKey() + ":" +toString(m) + "</br>");
 
-                if(cfg->logMQ)
-                {
-                    std::clog<<"mq: cmd:"<<m->getRoutingKey()<<toString(m)<<std::endl;
-                }
-
                 if(m->getRoutingKey() == "account.update")
                 {
-                    std::string accountName = toString(m);
-                    pdb->InformerUpdate(QUERY("user" << accountName));
+                    auto filter = document{};
+                    filter.append(kvp("user", toString(m)));
+                    pdb->InformerUpdate(filter);
                 }
 
                 mq_account_->Get(AMQP_NOACK);
@@ -134,7 +121,8 @@ void BaseCore::LoadAllEntities()
         return;
     }
     //Загрузили все информеры
-    pdb->InformerLoadAll();
+    auto filter = document{};
+    pdb->InformerUpdate(filter);
 
     //загрузили рейтинг
     cfg->pDb->indexRebuild();
@@ -246,12 +234,11 @@ std::string BaseCore::Status(const std::string &server_name)
 
     out << "<tr><td>Основная база данных:</td> <td>" <<
         cfg->mongo_main_db_<< "/";
-    out << "<br/>slave_ok = " << (cfg->mongo_main_slave_ok_? "true" : "false");
     out << "<br/>replica set=";
-    if (cfg->mongo_main_set_.empty())
+    if (cfg->mongo_main_url_.empty())
         out << "no set";
     else
-        out << cfg->mongo_main_set_;
+        out << cfg->mongo_main_url_;
     out << "</td></tr>";
     out << "<tr><td>AMQP:</td><td>" << (amqp_? "активен" : "не активен") << "</td></tr>";
     out <<  "<tr><td>Сборка: </td><td>" << __DATE__ << " " << __TIME__<<"</td></tr>";
