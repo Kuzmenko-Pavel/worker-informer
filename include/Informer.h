@@ -29,11 +29,11 @@ public:
 
         bool blocked;                           //Статус активности РБ
         std::string nonrelevant;            //Что отображать при отсутствии платных РП
-        std::string user_code;                  //Строка пользовательского кода
         bool valid;                             //Валидность блока
+        bool social_branch;                      
+        std::string user_code;                  //Строка пользовательского кода
         bool html_notification;                 
         bool plase_branch;                      
-        bool social_branch;                      
         bool retargeting_branch;
         int rating_division;
         int height;                             //Высота блока
